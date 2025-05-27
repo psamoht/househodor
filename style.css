@@ -1,39 +1,44 @@
 body {
   font-family: system-ui, sans-serif;
-  max-width: 500px;
-  margin: 2rem auto;
-  padding: 1rem;
-  text-align: center;
+  margin: 2rem;
   background: #f9f9f9;
-  color: #111;
+  color: #222;
 }
 
 h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
 h2 {
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
 }
 
+h3 {
+  font-size: 1.2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.3rem;
+  color: #444;
+}
+
 .button-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 button {
-  padding: 0.6rem 1rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.3rem;
   border: 2px solid #ccc;
-  border-radius: 8px;
+  border-radius: 10px;
   background-color: white;
   cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s ease-in-out;
+  transition: background-color 0.2s ease;
 }
 
 button:hover {
@@ -41,22 +46,42 @@ button:hover {
 }
 
 button.selected {
-  background-color: #2e7d32;
+  background-color: #2d8f2d;
   color: white;
-  border-color: #2e7d32;
+  border-color: #2d8f2d;
 }
 
 #submit {
-  background-color: #2e7d32;
+  display: block;
+  margin: 2rem auto;
+  background-color: #2d8f2d;
   color: white;
+  font-size: 1.4rem;
   border: none;
-  padding: 0.8rem 2rem;
-  font-size: 1rem;
-  margin-top: 1rem;
+  border-radius: 10px;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#submit:hover {
+  background-color: #237023;
 }
 
 #confirmation {
+  text-align: center;
+  font-size: 1.2rem;
+  color: green;
   margin-top: 1rem;
-  font-weight: bold;
-  color: #2e7d32;
+}
+
+#other-task {
+  margin-top: 0.5rem;
+  padding: 0.8rem 1rem;
+  font-size: 1.2rem;
+  width: 100%;
+  max-width: 400px;
+  display: block;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
