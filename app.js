@@ -38,17 +38,24 @@ document.getElementById("submit").addEventListener("click", () => {
   fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec", {
     method: "POST",
     body: formData
-  }).then(() => {
-    document.getElementById("confirmation").style.display = "block";
-    setTimeout(() => {
-      document.getElementById("confirmation").style.display = "none";
-    }, 2000);
+  })
+    .then(response => response.text())
+    .then(text => {
+      if (text.trim() === "Success") {
+        document.getElementById("confirmation").style.display = "block";
+        setTimeout(() => {
+          document.getElementById("confirmation").style.display = "none";
+        }, 2000);
 
-    selectedPerson = null;
-    selectedTask = null;
-    document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
-  }).catch((err) => {
-    alert("Error sending data");
-    console.error(err);
-  });
+        selectedPerson = null;
+        selectedTask = null;
+        document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
+      } else {
+        alert("Server error:\n" + text);
+      }
+    })
+    .catch((err) => {
+      alert("Network error:\n" + err.message);
+      console.error(err);
+    });
 });
