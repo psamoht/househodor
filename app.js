@@ -1,7 +1,6 @@
 let selectedPerson = null;
 let selectedTask = null;
 
-// Personenauswahl
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
     selectedPerson = btn.textContent;
@@ -9,7 +8,6 @@ document.querySelectorAll("#person-buttons button").forEach((btn) => {
   });
 });
 
-// Taskauswahl
 document.querySelectorAll("#task-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
     selectedTask = btn.textContent;
@@ -17,7 +15,6 @@ document.querySelectorAll("#task-buttons button").forEach((btn) => {
   });
 });
 
-// Hervorhebung des gewählten Buttons
 function highlightSelection(activeBtn, selector) {
   document.querySelectorAll(selector).forEach((btn) => {
     btn.classList.remove("selected");
@@ -25,29 +22,32 @@ function highlightSelection(activeBtn, selector) {
   activeBtn.classList.add("selected");
 }
 
-// Absenden des Formulars
 document.getElementById("submit").addEventListener("click", () => {
   if (!selectedPerson || !selectedTask) {
     alert("Please select a person and a task.");
     return;
   }
 
-  // Werte ins versteckte Formular schreiben
+  // Set form values
   document.getElementById("form-person").value = selectedPerson;
   document.getElementById("form-task").value = selectedTask;
   document.getElementById("form-timestamp").value = new Date().toISOString();
 
-  // Formular senden (via verstecktem iframe → umgeht CORS)
-  document.getElementById("hiddenForm").submit();
+  // Listen for iframe load (confirmation of submit)
+  const iframe = document.getElementById("hiddenIframe");
+  iframe.onload = () => {
+    document.getElementById("confirmation").style.display = "block";
+    setTimeout(() => {
+      document.getElementById("confirmation").style.display = "none";
+    }, 2000);
 
-  // Bestätigung anzeigen
-  document.getElementById("confirmation").style.display = "block";
-  setTimeout(() => {
-    document.getElementById("confirmation").style.display = "none";
-  }, 2000);
+    selectedPerson = null;
+    selectedTask = null;
+    document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
 
-  // Reset
-  selectedPerson = null;
-  selectedTask = null;
-  document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
+    iframe.onload = null; // reset handler
+  };
+
+  // Simulate button click on real <button type="submit">
+  document.getElementById("fake-submit").click();
 });
