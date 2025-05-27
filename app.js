@@ -34,20 +34,17 @@ document.getElementById("submit").addEventListener("click", () => {
   params.append("timestamp", new Date().toISOString());
 
   fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec", {
-    method: "POST",
-    body: params,
-    mode: "no-cors" // 👈 verhindert CORS-Fehler (aber du bekommst keine Antwort zurück)
-  }).then(() => {
-    document.getElementById("confirmation").style.display = "block";
-    setTimeout(() => {
-      document.getElementById("confirmation").style.display = "none";
-    }, 2000);
-
-    selectedPerson = null;
-    selectedTask = null;
-    document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
-  }).catch((err) => {
-    alert("Error sending data");
-    console.error(err);
+    method: "GET",
+    mode: "no-cors" // 👉 unterdrückt CORS-Fehler, ist für Google Apps Script okay
   });
+
+  // Zeige sofort Bestätigung (da keine Antwort kommt im no-cors-Modus)
+  document.getElementById("confirmation").style.display = "block";
+  setTimeout(() => {
+    document.getElementById("confirmation").style.display = "none";
+  }, 2000);
+
+  selectedPerson = null;
+  selectedTask = null;
+  document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
 });
