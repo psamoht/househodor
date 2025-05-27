@@ -34,7 +34,15 @@
   <button id="submit">Save Task</button>
   <p id="confirmation" style="display:none;">✅ Task saved!</p>
 
-  <!-- ✅ Load script after DOM is ready -->
+  <!-- Hidden form for POSTing to Google Apps Script (CORS-free) -->
+  <form id="hiddenForm" action="https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec" method="POST" target="hiddenIframe" style="display: none;">
+    <input type="text" name="person" id="form-person" />
+    <input type="text" name="task" id="form-task" />
+    <input type="text" name="timestamp" id="form-timestamp" />
+  </form>
+  <iframe name="hiddenIframe" style="display: none;"></iframe>
+
+  <!-- Load JS at the end -->
   <script src="app.js"></script>
 </body>
 </html>
