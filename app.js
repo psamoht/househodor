@@ -52,7 +52,6 @@ document.getElementById("submit").addEventListener("click", () => {
   }
 
   const timestamp = formatTimestamp(new Date());
-
   let tasksToSend = [...selectedTasks];
 
   if (otherTask) {
@@ -82,7 +81,6 @@ document.getElementById("submit").addEventListener("click", () => {
     document.getElementById("confirmation").style.display = "none";
   }, 2000);
 
-  // Reset
   selectedPerson = null;
   selectedTasks = [];
   document.getElementById("other-task").value = "";
