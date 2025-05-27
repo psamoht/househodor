@@ -1,6 +1,7 @@
 let selectedPerson = null;
 let selectedTask = null;
 
+// Handle person button selection
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
     selectedPerson = btn.textContent;
@@ -8,6 +9,7 @@ document.querySelectorAll("#person-buttons button").forEach((btn) => {
   });
 });
 
+// Handle task button selection
 document.querySelectorAll("#task-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
     selectedTask = btn.textContent;
@@ -15,6 +17,7 @@ document.querySelectorAll("#task-buttons button").forEach((btn) => {
   });
 });
 
+// Highlight selected button
 function highlightSelection(activeBtn, selector) {
   document.querySelectorAll(selector).forEach((btn) => {
     btn.classList.remove("selected");
@@ -22,6 +25,7 @@ function highlightSelection(activeBtn, selector) {
   activeBtn.classList.add("selected");
 }
 
+// Handle submit
 document.getElementById("submit").addEventListener("click", () => {
   if (!selectedPerson || !selectedTask) {
     alert("Please select a person and a task.");
@@ -34,7 +38,6 @@ document.getElementById("submit").addEventListener("click", () => {
     timestamp: new Date().toISOString()
   };
 
-  // 👉 Hier später dein Google Apps Script Webhook eintragen
   fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec", {
     method: "POST",
     body: JSON.stringify(data),
@@ -47,7 +50,7 @@ document.getElementById("submit").addEventListener("click", () => {
       document.getElementById("confirmation").style.display = "none";
     }, 2000);
 
-    // Reset
+    // Reset UI
     selectedPerson = null;
     selectedTask = null;
     document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
