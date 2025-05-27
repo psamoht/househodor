@@ -45,17 +45,13 @@
 
   <script src="app.js"></script>
   <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      const swPath = window.location.pathname.endsWith('/') 
-        ? 'sw.js' 
-        : window.location.pathname.split('/').slice(0, -1).join('/') + '/sw.js';
-
-      navigator.serviceWorker.register(swPath)
-        .then(() => console.log('✅ Service Worker registered:', swPath))
-        .catch((err) => console.error('❌ Service Worker error:', err));
-    });
-  }
-</script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('✅ Service Worker registered'))
+          .catch((err) => console.error('❌ Service Worker error:', err));
+      });
+    }
+  </script>
 </body>
 </html>
