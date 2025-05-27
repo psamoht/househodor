@@ -1,6 +1,5 @@
 let selectedPerson = null;
-let selectedTask = null;
-let selectedCategory = null;
+let selectedTasks = [];
 
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -11,9 +10,17 @@ document.querySelectorAll("#person-buttons button").forEach((btn) => {
 
 document.querySelectorAll("[data-category] button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    selectedTask = btn.textContent;
-    selectedCategory = btn.closest("[data-category]").getAttribute("data-category");
-    highlightSelection(btn, "[data-category] button");
+    btn.classList.toggle("selected");
+
+    const task = btn.textContent;
+    const category = btn.closest("[data-category]").getAttribute("data-category");
+
+    const index = selectedTasks.findIndex(t => t.task === task && t.category === category);
+    if (index >= 0) {
+      selectedTasks.splice(index, 1);
+    } else {
+      selectedTasks.push({ task, category });
+    }
   });
 });
 
@@ -44,28 +51,30 @@ document.getElementById("submit").addEventListener("click", () => {
     return;
   }
 
-  let task = selectedTask;
-  let category = selectedCategory;
+  const timestamp = formatTimestamp(new Date());
+
+  let tasksToSend = [...selectedTasks];
 
   if (otherTask) {
-    task = otherTask;
-    category = "Generell";
+    tasksToSend.push({ task: otherTask, category: "Generell" });
   }
 
-  if (!task || !category) {
-    alert("Please select a task or enter one under 'Other'.");
+  if (tasksToSend.length === 0) {
+    alert("Please select at least one task or enter one under 'Other'.");
     return;
   }
 
-  const params = new URLSearchParams();
-  params.append("person", selectedPerson);
-  params.append("category", category);
-  params.append("task", task);
-  params.append("timestamp", formatTimestamp(new Date()));
+  tasksToSend.forEach(({ task, category }) => {
+    const params = new URLSearchParams();
+    params.append("person", selectedPerson);
+    params.append("category", category);
+    params.append("task", task);
+    params.append("timestamp", timestamp);
 
-  fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec?" + params.toString(), {
-    method: "GET",
-    mode: "no-cors"
+    fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec?" + params.toString(), {
+      method: "GET",
+      mode: "no-cors"
+    });
   });
 
   document.getElementById("confirmation").style.display = "block";
@@ -73,9 +82,9 @@ document.getElementById("submit").addEventListener("click", () => {
     document.getElementById("confirmation").style.display = "none";
   }, 2000);
 
+  // Reset
   selectedPerson = null;
-  selectedTask = null;
-  selectedCategory = null;
+  selectedTasks = [];
   document.getElementById("other-task").value = "";
   document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
 });
