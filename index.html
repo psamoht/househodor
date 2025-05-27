@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chore Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <h1>Chore Tracker</h1>
+
+  <section>
+    <h2>Who did the chore?</h2>
+    <div class="button-grid" id="person-buttons">
+      <button type="button">Peter</button>
+      <button type="button">Anna</button>
+      <button type="button">Marie</button>
+      <button type="button">Max</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>What did they do?</h2>
+    <div class="button-grid" id="chore-buttons">
+      <button type="button">Dishwasher</button>
+      <button type="button">Vacuumed</button>
+      <button type="button">Cooked</button>
+      <button type="button">Laundry</button>
+      <button type="button">Trash</button>
+    </div>
+  </section>
+
+  <button id="submit">Save Chore</button>
+  <p id="confirmation" style="display:none;">✅ Chore saved!</p>
+
+  <script src="app.js"></script>
+</body>
+</html>
