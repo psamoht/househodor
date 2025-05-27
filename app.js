@@ -1,5 +1,5 @@
 let selectedPerson = null;
-let selectedChore = null;
+let selectedTask = null;
 
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -8,10 +8,10 @@ document.querySelectorAll("#person-buttons button").forEach((btn) => {
   });
 });
 
-document.querySelectorAll("#chore-buttons button").forEach((btn) => {
+document.querySelectorAll("#task-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    selectedChore = btn.textContent;
-    highlightSelection(btn, "#chore-buttons button");
+    selectedTask = btn.textContent;
+    highlightSelection(btn, "#task-buttons button");
   });
 });
 
@@ -23,14 +23,14 @@ function highlightSelection(activeBtn, selector) {
 }
 
 document.getElementById("submit").addEventListener("click", () => {
-  if (!selectedPerson || !selectedChore) {
-    alert("Please select a person and a chore.");
+  if (!selectedPerson || !selectedTask) {
+    alert("Please select a person and a task.");
     return;
   }
 
   const data = {
     person: selectedPerson,
-    task: selectedChore,
+    task: selectedTask,
     timestamp: new Date().toISOString()
   };
 
@@ -49,7 +49,7 @@ document.getElementById("submit").addEventListener("click", () => {
 
     // Reset
     selectedPerson = null;
-    selectedChore = null;
+    selectedTask = null;
     document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
   }).catch((err) => {
     alert("Error sending data");
