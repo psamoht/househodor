@@ -28,14 +28,18 @@ document.getElementById("submit").addEventListener("click", () => {
     return;
   }
 
-  // Set form values
+  const form = document.getElementById("hiddenForm");
   document.getElementById("form-person").value = selectedPerson;
   document.getElementById("form-task").value = selectedTask;
   document.getElementById("form-timestamp").value = new Date().toISOString();
 
-  // Listen for iframe load (confirmation of submit)
   const iframe = document.getElementById("hiddenIframe");
-  iframe.onload = () => {
+
+  // Trick: neuer iframe, um Load sicher abzufangen
+  const tempIframe = iframe.cloneNode();
+  iframe.replaceWith(tempIframe);
+
+  tempIframe.onload = () => {
     document.getElementById("confirmation").style.display = "block";
     setTimeout(() => {
       document.getElementById("confirmation").style.display = "none";
@@ -44,10 +48,8 @@ document.getElementById("submit").addEventListener("click", () => {
     selectedPerson = null;
     selectedTask = null;
     document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
-
-    iframe.onload = null; // reset handler
   };
 
-  // Simulate button click on real <button type="submit">
-  document.getElementById("fake-submit").click();
+  form.target = tempIframe.name;
+  form.submit();
 });
