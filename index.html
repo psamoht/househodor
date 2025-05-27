@@ -1,57 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Task Tracker</title>
+  <title>House Hodor</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="manifest" href="manifest.json" />
 </head>
 <body>
-  <h1>Task Tracker</h1>
+  <h1>House Hodor</h1>
 
   <section>
-    <h2>Who did the task?</h2>
+    <h2>Person</h2>
     <div class="button-grid" id="person-buttons">
       <button type="button">Peter</button>
-      <button type="button">Anna</button>
-      <button type="button">Marie</button>
-      <button type="button">Max</button>
+      <button type="button">Mimi</button>
     </div>
   </section>
 
   <section>
-    <h2>What task was completed?</h2>
-    <div class="button-grid" id="task-buttons">
-      <button type="button">Dishwasher</button>
-      <button type="button">Vacuumed</button>
-      <button type="button">Cooked</button>
-      <button type="button">Laundry</button>
-      <button type="button">Trash</button>
+    <h2>Task</h2>
+
+    <h3>Morgen</h3>
+    <div class="button-grid" data-category="Morgen">
+      <button type="button">Smoothie</button>
+      <button type="button">Obst für Müsli</button>
+      <button type="button">Brötchen holen</button>
+      <button type="button">Küche aufgeräumt</button>
+      <button type="button">Lordi Tablette</button>
+      <button type="button">Lordi Gassi</button>
+      <button type="button">Lordi Futter</button>
     </div>
+
+    <h3>Mittag</h3>
+    <div class="button-grid" data-category="Mittag">
+      <button type="button">Kochen</button>
+      <button type="button">Essen aufgewärmt</button>
+      <button type="button">Küche aufgeräumt</button>
+      <button type="button">Lordi Gassi</button>
+      <button type="button">Lordi Futter</button>
+    </div>
+
+    <h3>Abend</h3>
+    <div class="button-grid" data-category="Abend">
+      <button type="button">Kochen</button>
+      <button type="button">Essen aufgewärmt</button>
+      <button type="button">Küche aufgeräumt</button>
+      <button type="button">Lordi Gassi</button>
+      <button type="button">Lordi Futter</button>
+    </div>
+
+    <h3>Generell</h3>
+    <div class="button-grid" data-category="Generell">
+      <button type="button">Bad geputzt</button>
+      <button type="button">Dusche geputzt</button>
+      <button type="button">Küche geputzt</button>
+      <button type="button">Staubsaugen</button>
+      <button type="button">Rosi ausgeleert</button>
+      <button type="button">Aufräumen</button>
+      <button type="button">Müll runterbringen</button>
+      <button type="button">Müll zum Container</button>
+    </div>
+
+    <h3>Other</h3>
+    <input type="text" id="other-task" placeholder="Sonstiger Task..." />
   </section>
 
   <button id="submit">Save Task</button>
   <p id="confirmation" style="display:none;">✅ Task saved!</p>
 
-  <!-- Hidden form for Google Sheets webhook -->
-  <form id="hiddenForm" action="https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec" method="POST" target="hiddenIframe" style="display: none;">
-    <input type="text" name="person" id="form-person" />
-    <input type="text" name="task" id="form-task" />
-    <input type="text" name="timestamp" id="form-timestamp" />
-    <button type="submit" id="fake-submit">Send</button>
-  </form>
-  <iframe name="hiddenIframe" id="hiddenIframe" style="display: none;"></iframe>
-
   <script src="app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(() => console.log('✅ Service Worker registered'))
-          .catch((err) => console.error('❌ Service Worker error:', err));
-      });
-    }
-  </script>
 </body>
 </html>
