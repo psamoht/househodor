@@ -28,12 +28,12 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 button {
-  padding: 1rem 1.5rem;
-  font-size: 1.3rem;
+  padding: 1.2rem 1.8rem;
+  font-size: 1.4rem;
   border: 2px solid #ccc;
   border-radius: 10px;
   background-color: white;
@@ -56,10 +56,10 @@ button.selected {
   margin: 2rem auto;
   background-color: #2d8f2d;
   color: white;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   border: none;
   border-radius: 10px;
-  padding: 1rem 2rem;
+  padding: 1.2rem 2.4rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -77,8 +77,8 @@ button.selected {
 
 #other-task {
   margin-top: 0.5rem;
-  padding: 0.8rem 1rem;
-  font-size: 1.2rem;
+  padding: 1rem;
+  font-size: 1.3rem;
   width: 100%;
   max-width: 400px;
   display: block;
