@@ -35,7 +35,7 @@ document.getElementById("submit").addEventListener("click", () => {
   };
 
   // 👉 Hier später dein Google Apps Script Webhook eintragen
-  fetch("https://example.com/your-google-script-url", {
+  fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec", {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
