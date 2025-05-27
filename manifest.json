@@ -1,10 +1,10 @@
 {
-  "name": "Chore Tracker",
-  "short_name": "Chores",
+  "name": "Task Tracker",
+  "short_name": "Tasks",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#4CAF50",
+  "background_color": "#f9f9f9",
+  "theme_color": "#2e7d32",
   "icons": [
     {
       "src": "icons/icon-192.png",
