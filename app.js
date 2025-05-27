@@ -28,18 +28,16 @@ document.getElementById("submit").addEventListener("click", () => {
     return;
   }
 
-  const form = document.getElementById("hiddenForm");
-  document.getElementById("form-person").value = selectedPerson;
-  document.getElementById("form-task").value = selectedTask;
-  document.getElementById("form-timestamp").value = new Date().toISOString();
+  const params = new URLSearchParams();
+  params.append("person", selectedPerson);
+  params.append("task", selectedTask);
+  params.append("timestamp", new Date().toISOString());
 
-  const iframe = document.getElementById("hiddenIframe");
-
-  // Trick: neuer iframe, um Load sicher abzufangen
-  const tempIframe = iframe.cloneNode();
-  iframe.replaceWith(tempIframe);
-
-  tempIframe.onload = () => {
+  fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec", {
+    method: "POST",
+    body: params,
+    mode: "no-cors" // 👈 verhindert CORS-Fehler (aber du bekommst keine Antwort zurück)
+  }).then(() => {
     document.getElementById("confirmation").style.display = "block";
     setTimeout(() => {
       document.getElementById("confirmation").style.display = "none";
@@ -48,8 +46,8 @@ document.getElementById("submit").addEventListener("click", () => {
     selectedPerson = null;
     selectedTask = null;
     document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
-  };
-
-  form.target = tempIframe.name;
-  form.submit();
+  }).catch((err) => {
+    alert("Error sending data");
+    console.error(err);
+  });
 });
