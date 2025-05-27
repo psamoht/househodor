@@ -30,7 +30,7 @@ document.getElementById("submit").addEventListener("click", () => {
 
   const data = {
     person: selectedPerson,
-    chore: selectedChore,
+    task: selectedChore,
     timestamp: new Date().toISOString()
   };
 
