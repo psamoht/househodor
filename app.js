@@ -1,7 +1,7 @@
 let selectedPerson = null;
 let selectedTask = null;
 
-// Handle person button selection
+// Personenauswahl
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
     selectedPerson = btn.textContent;
@@ -9,7 +9,7 @@ document.querySelectorAll("#person-buttons button").forEach((btn) => {
   });
 });
 
-// Handle task button selection
+// Taskauswahl
 document.querySelectorAll("#task-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
     selectedTask = btn.textContent;
@@ -17,6 +17,7 @@ document.querySelectorAll("#task-buttons button").forEach((btn) => {
   });
 });
 
+// Hervorhebung des gewählten Buttons
 function highlightSelection(activeBtn, selector) {
   document.querySelectorAll(selector).forEach((btn) => {
     btn.classList.remove("selected");
@@ -24,38 +25,29 @@ function highlightSelection(activeBtn, selector) {
   activeBtn.classList.add("selected");
 }
 
+// Absenden des Formulars
 document.getElementById("submit").addEventListener("click", () => {
   if (!selectedPerson || !selectedTask) {
     alert("Please select a person and a task.");
     return;
   }
 
-  const formData = new URLSearchParams();
-  formData.append("person", selectedPerson);
-  formData.append("task", selectedTask);
-  formData.append("timestamp", new Date().toISOString());
+  // Werte ins versteckte Formular schreiben
+  document.getElementById("form-person").value = selectedPerson;
+  document.getElementById("form-task").value = selectedTask;
+  document.getElementById("form-timestamp").value = new Date().toISOString();
 
-  fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec", {
-    method: "POST",
-    body: formData
-  })
-    .then(response => response.text())
-    .then(text => {
-      if (text.trim() === "Success") {
-        document.getElementById("confirmation").style.display = "block";
-        setTimeout(() => {
-          document.getElementById("confirmation").style.display = "none";
-        }, 2000);
+  // Formular senden (via verstecktem iframe → umgeht CORS)
+  document.getElementById("hiddenForm").submit();
 
-        selectedPerson = null;
-        selectedTask = null;
-        document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
-      } else {
-        alert("Server error:\n" + text);
-      }
-    })
-    .catch((err) => {
-      alert("Network error:\n" + err.message);
-      console.error(err);
-    });
+  // Bestätigung anzeigen
+  document.getElementById("confirmation").style.display = "block";
+  setTimeout(() => {
+    document.getElementById("confirmation").style.display = "none";
+  }, 2000);
+
+  // Reset
+  selectedPerson = null;
+  selectedTask = null;
+  document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
 });
