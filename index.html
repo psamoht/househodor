@@ -34,17 +34,17 @@
   <button id="submit">Save Task</button>
   <p id="confirmation" style="display:none;">✅ Task saved!</p>
 
-  <!-- Hidden form for Google Sheets Webhook -->
+  <!-- Hidden form for Google Sheets webhook -->
   <form id="hiddenForm" action="https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec" method="POST" target="hiddenIframe" style="display: none;">
     <input type="text" name="person" id="form-person" />
     <input type="text" name="task" id="form-task" />
     <input type="text" name="timestamp" id="form-timestamp" />
+    <button type="submit" id="fake-submit">Send</button>
   </form>
-  <iframe name="hiddenIframe" style="display: none;"></iframe>
+  <iframe name="hiddenIframe" id="hiddenIframe" style="display: none;"></iframe>
 
   <script src="app.js"></script>
   <script>
-    // Register Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
