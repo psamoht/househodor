@@ -1,8 +1,9 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>House Hodor</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="manifest" href="manifest.json" />
@@ -13,77 +14,95 @@
   <section>
     <h2>Person</h2>
     <div class="button-grid" id="person-buttons">
-      <button type="button" class="person-peter">Peter</button>
-      <button type="button" class="person-mimi">Mimi</button>
+      <button type="button" data-person="Peter">Peter</button>
+      <button type="button" data-person="Mimi">Mimi</button>
     </div>
   </section>
 
   <section>
     <h2>Task</h2>
 
-    <div class="category-label">Morgen</div>
-    <div class="button-grid" id="task-morgen">
-      <button class="task">Smoothie</button>
-      <button class="task">Obst für Müsli</button>
-      <button class="task">Brötchen holen</button>
-      <button class="task">Küche aufgeräumt</button>
-      <button class="task">Lordi Tablette</button>
-      <button class="task">Lordi Gassi</button>
-      <button class="task">Lordi Futter</button>
+    <div class="task-section">
+      <h3>Morgen</h3>
+      <div class="button-grid">
+        <button type="button" data-category="Morgen">Smoothie</button>
+        <button type="button" data-category="Morgen">Obst für Müsli</button>
+        <button type="button" data-category="Morgen">Brötchen holen</button>
+        <button type="button" data-category="Morgen">Küche aufgeräumt</button>
+        <button type="button" data-category="Morgen">Lordi Tablette</button>
+        <button type="button" data-category="Morgen">Lordi Gassi</button>
+        <button type="button" data-category="Morgen">Lordi Futter</button>
+      </div>
     </div>
 
-    <div class="category-label">Mittag</div>
-    <div class="button-grid" id="task-mittag">
-      <button class="task">Kochen</button>
-      <button class="task">Essen aufgewärmt</button>
-      <button class="task">Küche aufgeräumt</button>
-      <button class="task">Lordi Gassi</button>
-      <button class="task">Lordi Futter</button>
+    <div class="task-section">
+      <h3>Mittag</h3>
+      <div class="button-grid">
+        <button type="button" data-category="Mittag">Kochen</button>
+        <button type="button" data-category="Mittag">Essen aufgewärmt</button>
+        <button type="button" data-category="Mittag">Küche aufgeräumt</button>
+        <button type="button" data-category="Mittag">Lordi Gassi</button>
+        <button type="button" data-category="Mittag">Lordi Futter</button>
+      </div>
     </div>
 
-    <div class="category-label">Abend</div>
-    <div class="button-grid" id="task-abend">
-      <button class="task">Kochen</button>
-      <button class="task">Essen aufgewärmt</button>
-      <button class="task">Küche aufgeräumt</button>
-      <button class="task">Lordi Gassi</button>
-      <button class="task">Lordi Futter</button>
+    <div class="task-section">
+      <h3>Abend</h3>
+      <div class="button-grid">
+        <button type="button" data-category="Abend">Kochen</button>
+        <button type="button" data-category="Abend">Essen aufgewärmt</button>
+        <button type="button" data-category="Abend">Küche aufgeräumt</button>
+        <button type="button" data-category="Abend">Lordi Gassi</button>
+        <button type="button" data-category="Abend">Lordi Futter</button>
+      </div>
     </div>
 
-    <div class="category-label">Generell</div>
-    <div class="button-grid" id="task-generell">
-      <button class="task">Bad geputzt</button>
-      <button class="task">Dusche geputzt</button>
-      <button class="task">Küche geputzt</button>
-      <button class="task">Staubsaugen</button>
-      <button class="task">Rosi ausgeleert</button>
-      <button class="task">Aufräumen</button>
-      <button class="task">Müll runterbringen</button>
-      <button class="task">Müll zum Container</button>
-      <button class="task">Wäscherei</button>
-      <button class="task">Spülmaschine ausräumen</button>
-      <button class="task">Spülmaschine einräumen</button>
+    <div class="task-section">
+      <h3>Generell</h3>
+      <div class="button-grid">
+        <button type="button" data-category="Generell">Bad geputzt</button>
+        <button type="button" data-category="Generell">Dusche geputzt</button>
+        <button type="button" data-category="Generell">Küche geputzt</button>
+        <button type="button" data-category="Generell">Staubsaugen</button>
+        <button type="button" data-category="Generell">Rosi ausgeleert</button>
+        <button type="button" data-category="Generell">Aufräumen</button>
+        <button type="button" data-category="Generell">Müll runterbringen</button>
+        <button type="button" data-category="Generell">Müll zum Container</button>
+        <button type="button" data-category="Generell">Spülmaschine ausräumen</button>
+        <button type="button" data-category="Generell">Spülmaschine einräumen</button>
+        <button type="button" data-category="Generell">Wäscherei</button>
+      </div>
     </div>
 
-    <input type="text" id="other-task" placeholder="Other task (Generell)" />
+    <div class="task-section">
+      <h3>Other</h3>
+      <input type="text" id="otherTask" placeholder="Enter custom task" />
+    </div>
+  </section>
 
-    <div class="category-label">Emotional Health</div>
-    <div>
-      <label><input type="checkbox" id="stress" /> Stress</label><br />
-      <label><input type="checkbox" id="conflict" /> Streit</label><br />
-      <textarea id="conflict-details" placeholder="Details zum Streit..."></textarea>
+  <section>
+    <h2>Emotional Health</h2>
+    <div class="emotions">
+      <label><input type="checkbox" id="stressCheckbox" /> Stress</label>
+      <label>
+        <input type="checkbox" id="conflictCheckbox" /> Streit:
+        <input type="text" id="conflictDetails" placeholder="Was war los?" />
+      </label>
     </div>
   </section>
 
   <button id="submit">Save Task</button>
-  <p id="confirmation">✅ Task saved!</p>
+  <p id="confirmation" class="confirmation-popup" style="display: none">✅ Task saved!</p>
 
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(() => console.log('✅ Service Worker registered'))
+        const swPath = window.location.pathname.endsWith('/') 
+          ? 'sw.js' 
+          : window.location.pathname.split('/').slice(0, -1).join('/') + '/sw.js';
+        navigator.serviceWorker.register(swPath)
+          .then(() => console.log('✅ Service Worker registered:', swPath))
           .catch((err) => console.error('❌ Service Worker error:', err));
       });
     }
