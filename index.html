@@ -57,31 +57,27 @@
         <button type="button">Aufräumen</button>
         <button type="button">Müll runterbringen</button>
         <button type="button">Müll zum Container</button>
-        <button type="button">Wäscherei</button>
         <button type="button">Spülmaschine ausräumen</button>
         <button type="button">Spülmaschine einräumen</button>
+        <button type="button">Wäscherei</button>
       </div>
     </div>
-  </section>
-
-  <section>
-    <h3>Other (Generell)</h3>
-    <input type="text" id="custom-task" placeholder="Eigener Task" />
+    <div class="other-task">
+      <input type="text" id="other-task" placeholder="Other task..." />
+    </div>
   </section>
 
   <section>
     <h2>Emotional Health</h2>
-    <div class="checkbox-group">
+    <div class="emotional-health">
       <label><input type="checkbox" id="stress" /> Stress</label>
-      <label>
-        <input type="checkbox" id="conflict" /> Streit
-        <input type="text" id="conflict-details" placeholder="Details zum Streit" />
-      </label>
+      <label><input type="checkbox" id="dispute" /> Streit:</label>
+      <input type="text" id="dispute-details" placeholder="Details zum Streit..." />
     </div>
   </section>
 
   <button id="submit">Save Task</button>
-  <p id="confirmation" style="display:none;">✅ Task saved!</p>
+  <p id="confirmation" class="confirmation" style="display:none;">✅ Task saved!</p>
 
   <script src="app.js"></script>
   <script>
