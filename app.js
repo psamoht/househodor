@@ -1,13 +1,25 @@
-let selectedPerson = null;
+// ✅ Aktualisierte app.js mit Emotional Health, Duplikatschutz-Unterstützung, Nachtmodus-kompatibel
+
+let selectedPeople = [];
 let selectedTasks = [];
 
+// Personenauswahl (Mehrfach möglich)
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    selectedPerson = btn.textContent;
-    highlightSelection(btn, "#person-buttons button");
+    btn.classList.toggle("selected");
+
+    const name = btn.textContent;
+    const index = selectedPeople.indexOf(name);
+
+    if (index >= 0) {
+      selectedPeople.splice(index, 1);
+    } else {
+      selectedPeople.push(name);
+    }
   });
 });
 
+// Taskauswahl (Mehrfachauswahl)
 document.querySelectorAll("[data-category] button").forEach((btn) => {
   btn.addEventListener("click", () => {
     btn.classList.toggle("selected");
@@ -24,13 +36,6 @@ document.querySelectorAll("[data-category] button").forEach((btn) => {
   });
 });
 
-function highlightSelection(activeBtn, selector) {
-  document.querySelectorAll(selector).forEach((btn) => {
-    btn.classList.remove("selected");
-  });
-  activeBtn.classList.add("selected");
-}
-
 function formatTimestamp(date) {
   const pad = (n) => (n < 10 ? "0" + n : n);
   return (
@@ -45,27 +50,40 @@ function formatTimestamp(date) {
 
 document.getElementById("submit").addEventListener("click", () => {
   const otherTask = document.getElementById("other-task").value.trim();
+  const stressChecked = document.getElementById("stress-check").checked;
+  const streitChecked = document.getElementById("streit-check").checked;
+  const streitText = document.getElementById("streit-text").value.trim();
 
-  if (!selectedPerson) {
-    alert("Please select a person.");
+  if (selectedPeople.length === 0) {
+    alert("Bitte eine Person auswählen.");
     return;
   }
 
   const timestamp = formatTimestamp(new Date());
+  const personField = selectedPeople.length === 2 ? "Gemeinsam" : selectedPeople[0];
+
   let tasksToSend = [...selectedTasks];
 
   if (otherTask) {
     tasksToSend.push({ task: otherTask, category: "Generell" });
   }
 
+  if (stressChecked) {
+    tasksToSend.push({ task: "Ja", category: "Stress", forcePerson: personField });
+  }
+
+  if (streitChecked && streitText) {
+    tasksToSend.push({ task: streitText, category: "Streit", forcePerson: "Beide" });
+  }
+
   if (tasksToSend.length === 0) {
-    alert("Please select at least one task or enter one under 'Other'.");
+    alert("Bitte mindestens eine Aufgabe auswählen oder eingeben.");
     return;
   }
 
-  tasksToSend.forEach(({ task, category }) => {
+  tasksToSend.forEach(({ task, category, forcePerson }) => {
     const params = new URLSearchParams();
-    params.append("person", selectedPerson);
+    params.append("person", forcePerson || personField);
     params.append("category", category);
     params.append("task", task);
     params.append("timestamp", timestamp);
@@ -81,8 +99,12 @@ document.getElementById("submit").addEventListener("click", () => {
     document.getElementById("confirmation").style.display = "none";
   }, 2000);
 
-  selectedPerson = null;
+  selectedPeople = [];
   selectedTasks = [];
   document.getElementById("other-task").value = "";
+  document.getElementById("stress-check").checked = false;
+  document.getElementById("streit-check").checked = false;
+  document.getElementById("streit-text").value = "";
+
   document.querySelectorAll("button").forEach((btn) => btn.classList.remove("selected"));
 });
