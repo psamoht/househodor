@@ -5,15 +5,29 @@ let selectedTasks = new Set();
 function updateButtonStyles() {
   // Personen-Buttons
   document.querySelectorAll("#person-buttons button").forEach((btn) => {
-    if (selectedPerson.includes(btn.textContent)) {
-      btn.classList.add("selected", btn.textContent.toLowerCase());
+    const personName = btn.dataset.person.toLowerCase(); // Verwende data-person für die Klasse
+    if (selectedPerson.includes(btn.dataset.person)) {
+      btn.classList.add("selected", `person-${personName}`); // z.B. person-peter
     } else {
-      btn.classList.remove("selected", "peter", "mimi");
+      btn.classList.remove("selected", `person-${personName}`);
+      // Stelle sicher, dass alle Personenklassen entfernt werden, falls mehrere möglich wären
+      // Da hier nur eine Person pro Button, ist dies spezifisch genug.
+      // Falls ein Button für "Gemeinsam" existieren würde, bräuchte es eine andere Logik.
+      // Die aktuelle Logik entfernt "peter" und "mimi" explizit beim Deselektieren,
+      // was okay ist, solange es nur diese zwei gibt. Besser ist es, die spezifische Klasse zu entfernen.
+      document.querySelectorAll("#person-buttons button").forEach(pBtn => {
+          pBtn.classList.remove(`person-${pBtn.dataset.person.toLowerCase()}`);
+          if (selectedPerson.includes(pBtn.dataset.person)) {
+              pBtn.classList.add("selected", `person-${pBtn.dataset.person.toLowerCase()}`);
+          } else {
+              pBtn.classList.remove("selected");
+          }
+      });
     }
   });
 
   // Task-Buttons
-  document.querySelectorAll("#task-buttons button").forEach((btn) => {
+  document.querySelectorAll("div[data-category] button").forEach((btn) => { // *** KORRIGIERTER SELEKTOR ***
     if (selectedTasks.has(btn.textContent)) {
       btn.classList.add("selected-task");
     } else {
@@ -25,7 +39,7 @@ function updateButtonStyles() {
 // Person Buttons
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    const name = btn.textContent;
+    const name = btn.dataset.person; // Verwende data-person Attribut
     if (selectedPerson.includes(name)) {
       selectedPerson = selectedPerson.filter((n) => n !== name);
     } else {
@@ -36,7 +50,7 @@ document.querySelectorAll("#person-buttons button").forEach((btn) => {
 });
 
 // Task Buttons
-document.querySelectorAll("#task-buttons button").forEach((btn) => {
+document.querySelectorAll("div[data-category] button").forEach((btn) => { // *** KORRIGIERTER SELEKTOR ***
   btn.addEventListener("click", () => {
     const task = btn.textContent;
     if (selectedTasks.has(task)) {
@@ -54,8 +68,10 @@ saveButton.addEventListener("click", () => {
   const person =
     selectedPerson.length === 2 ? "Gemeinsam" : selectedPerson[0] || "";
 
-  if (!person || selectedTasks.size === 0) {
-    alert("Bitte wähle mindestens eine Person und eine Aufgabe aus.");
+  const customTaskValue = document.getElementById("customTask").value.trim(); // *** KORRIGIERTE ID ***
+
+  if (!person || (selectedTasks.size === 0 && !customTaskValue)) {
+    alert("Bitte wähle mindestens eine Person und eine Aufgabe aus oder gib eine benutzerdefinierte Aufgabe ein.");
     return;
   }
 
@@ -72,29 +88,35 @@ saveButton.addEventListener("click", () => {
   const entries = [];
 
   // Tasks
-  selectedTasks.forEach((task) => {
-    const category = document.querySelector(
-      `#task-buttons button[value='${task}']`
-    )?.dataset.category || "Generell";
-    entries.push({ person, category, task, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
+  selectedTasks.forEach((taskText) => {
+    let category = "Generell"; // Standardkategorie
+    // Finde den Button, um die Kategorie zu bestimmen
+    document.querySelectorAll("div[data-category] button").forEach(btn => {
+      if (btn.textContent === taskText) {
+        const parentGrid = btn.closest("div[data-category]");
+        if (parentGrid) {
+          category = parentGrid.dataset.category;
+        }
+      }
+    });
+    entries.push({ person, category, task: taskText, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   });
 
-  // Other
-  const other = document.getElementById("other-task").value.trim();
-  if (other) {
-    entries.push({ person, category: "Generell", task: other, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
+  // Other (Custom Task)
+  if (customTaskValue) { // *** Verwendet korrigierte Variable ***
+    entries.push({ person, category: "Generell", task: customTaskValue, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   }
 
   // Stress
-  if (document.getElementById("stress-check").checked) {
+  if (document.getElementById("stressCheckbox").checked) { // *** KORRIGIERTE ID ***
     entries.push({ person, category: "Stress", task: "Ja", timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   }
 
   // Streit
-  const streit = document.getElementById("streit-check").checked;
-  const streitText = document.getElementById("streit-text").value.trim();
-  if (streit && streitText) {
-    entries.push({ person: "Beide", category: "Streit", task: streitText, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
+  const streitChecked = document.getElementById("conflictCheckbox").checked; // *** KORRIGIERTE ID ***
+  const streitText = document.getElementById("conflictDetails").value.trim(); // *** KORRIGIERTE ID ***
+  if (streitChecked) { // Streit wird auch ohne Details gespeichert, falls die Checkbox aktiv ist
+    entries.push({ person: selectedPerson.length === 1 ? selectedPerson[0] : "Beide", category: "Streit", task: streitText || "Ja", timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   }
 
   // Send to Apps Script
@@ -105,8 +127,15 @@ saveButton.addEventListener("click", () => {
     },
     body: JSON.stringify(entries),
   })
-    .then((res) => res.text())
-    .then(() => {
+    .then((res) => {
+        if (!res.ok) {
+            // Wenn der Server einen Fehlerstatus zurückgibt (z.B. 4xx, 5xx)
+            return res.text().then(text => { throw new Error("Server-Antwort: " + res.status + " " + text) });
+        }
+        return res.text();
+    })
+    .then((textResponse) => {
+      console.log("Apps Script Response:", textResponse); // Log für Debugging
       document.getElementById("confirmation").style.display = "block";
       setTimeout(() => {
         document.getElementById("confirmation").style.display = "none";
@@ -114,13 +143,17 @@ saveButton.addEventListener("click", () => {
 
       selectedPerson = [];
       selectedTasks.clear();
-      document.getElementById("other-task").value = "";
-      document.getElementById("stress-check").checked = false;
-      document.getElementById("streit-check").checked = false;
-      document.getElementById("streit-text").value = "";
+      document.getElementById("customTask").value = ""; // *** KORRIGIERTE ID ***
+      document.getElementById("stressCheckbox").checked = false; // *** KORRIGIERTE ID ***
+      document.getElementById("conflictCheckbox").checked = false; // *** KORRIGIERTE ID ***
+      document.getElementById("conflictDetails").value = ""; // *** KORRIGIERTE ID ***
       updateButtonStyles();
     })
     .catch((err) => {
       alert("Fehler beim Speichern: " + err.message);
+      console.error("Fetch Error:", err);
     });
 });
+
+// Initialen Style setzen, falls notwendig (z.B. wenn Werte aus LocalStorage geladen werden)
+updateButtonStyles();
