@@ -1,138 +1,76 @@
-let selectedPerson = [];
+let selectedPeople = new Set();
 let selectedTasks = new Set();
-let emotionalData = {
-  stress: false,
-  streit: ""
-};
 
-// Highlight selected button
-function highlightSelection(btn, groupSelector, multi = false) {
-  const buttons = document.querySelectorAll(groupSelector);
-
-  if (!multi) {
-    buttons.forEach((b) => b.classList.remove("selected"));
-    btn.classList.add("selected");
-  } else {
-    btn.classList.toggle("selected");
-  }
-}
-
-// Person selection
-const personButtons = document.querySelectorAll("#person-buttons button");
-personButtons.forEach((btn) => {
+// Handle person button selection (multiple possible)
+document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    btn.classList.toggle("selected");
     const name = btn.textContent;
-    if (selectedPerson.includes(name)) {
-      selectedPerson = selectedPerson.filter((p) => p !== name);
+    if (selectedPeople.has(name)) {
+      selectedPeople.delete(name);
+      btn.classList.remove("selected", "peter-selected", "mimi-selected");
     } else {
-      selectedPerson.push(name);
+      selectedPeople.add(name);
+      if (name === "Peter") btn.classList.add("peter-selected");
+      else if (name === "Mimi") btn.classList.add("mimi-selected");
     }
   });
 });
 
-// Task selection
-const taskButtons = document.querySelectorAll("#task-buttons button");
-taskButtons.forEach((btn) => {
+// Handle task button selection (multiple possible)
+document.querySelectorAll("#task-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    const task = btn.getAttribute("data-task");
-    if (selectedTasks.has(task)) {
-      selectedTasks.delete(task);
+    const name = btn.textContent;
+    if (selectedTasks.has(name)) {
+      selectedTasks.delete(name);
+      btn.classList.remove("selected-task");
     } else {
-      selectedTasks.add(task);
+      selectedTasks.add(name);
+      btn.classList.add("selected-task");
     }
-    highlightSelection(btn, "#task-buttons button", true);
   });
 });
 
-// Emotional Health
-const stressCheckbox = document.getElementById("stress");
-stressCheckbox.addEventListener("change", () => {
-  emotionalData.stress = stressCheckbox.checked;
-});
-
+// Handle emotional health checkboxes
 document.getElementById("submit").addEventListener("click", () => {
-  if (selectedPerson.length === 0 || selectedTasks.size === 0) {
-    alert("Please select at least one person and one task.");
+  if (selectedPeople.size === 0 || (selectedTasks.size === 0 && !document.getElementById("other-task").value.trim() && !document.getElementById("stress").checked && !document.getElementById("conflict").checked)) {
+    alert("Bitte wähle mindestens eine Person und eine Aufgabe oder gib eine andere Aufgabe an.");
     return;
   }
 
-  const timestamp = new Date();
-  const dateForSheet = new Date(timestamp);
-  if (timestamp.getHours() < 3) {
-    dateForSheet.setDate(dateForSheet.getDate() - 1);
-  }
+  const person = Array.from(selectedPeople);
+  const tasks = Array.from(selectedTasks).map(task => ({
+    name: task,
+    category: document.querySelector(`button[data-task='${task}']`).closest(".section").dataset.category
+  }));
 
-  const formattedTimestamp = timestamp.toLocaleString("de-DE");
-  const erledigungsdatum = dateForSheet.toLocaleDateString("de-DE");
-  const personField =
-    selectedPerson.length === 2 ? "Gemeinsam" : selectedPerson[0];
+  const data = {
+    person,
+    tasks,
+    otherTask: document.getElementById("other-task").value,
+    stress: document.getElementById("stress").checked,
+    conflict: document.getElementById("conflict").checked,
+    conflictDetails: document.getElementById("conflict-details").value,
+    timestamp: new Date().toISOString()
+  };
 
-  const rows = [];
-
-  // Regular tasks
-  selectedTasks.forEach((taskString) => {
-    const [category, task] = taskString.split("|");
-    rows.push([personField, category, task, formattedTimestamp, erledigungsdatum]);
-  });
-
-  // Freitext Task
-  const otherTask = document.getElementById("other-task").value.trim();
-  if (otherTask) {
-    rows.push([
-      personField,
-      "Generell",
-      otherTask,
-      formattedTimestamp,
-      erledigungsdatum
-    ]);
-  }
-
-  // Stress
-  if (emotionalData.stress) {
-    rows.push([
-      personField,
-      "Stress",
-      "Ja",
-      formattedTimestamp,
-      erledigungsdatum
-    ]);
-  }
-
-  // Streit
-  const streitText = document.getElementById("streit-text").value.trim();
-  if (streitText) {
-    rows.push([
-      "Beide",
-      "Streit",
-      streitText,
-      formattedTimestamp,
-      erledigungsdatum
-    ]);
-  }
-
-  // Send to Google Sheets
-  fetch(
-    "https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec",
-    {
-      method: "POST",
-      body: JSON.stringify(rows),
-      headers: {
-        "Content-Type": "application/json"
-      }
+  fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec", {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
     }
-  )
-    .then((res) => res.text())
-    .then((text) => {
+  })
+    .then(res => res.text())
+    .then(text => {
       if (text.trim() === "Success") {
         showConfirmation();
-        resetAll();
+        resetForm();
       } else {
-        alert("Server error: " + text);
+        alert("Server Error: " + text);
       }
     })
-    .catch((err) => {
-      alert("Error sending data: " + err);
+    .catch(err => {
+      alert("Fehler beim Senden: " + err.message);
       console.error(err);
     });
 });
@@ -145,14 +83,12 @@ function showConfirmation() {
   }, 2000);
 }
 
-function resetAll() {
-  selectedPerson = [];
+function resetForm() {
+  selectedPeople.clear();
   selectedTasks.clear();
-  emotionalData = { stress: false, streit: "" };
-  document.querySelectorAll(".selected").forEach((btn) => {
-    btn.classList.remove("selected");
-  });
+  document.querySelectorAll("button").forEach(btn => btn.classList.remove("selected", "peter-selected", "mimi-selected", "selected-task"));
   document.getElementById("other-task").value = "";
-  document.getElementById("streit-text").value = "";
   document.getElementById("stress").checked = false;
-}
+  document.getElementById("conflict").checked = false;
+  document.getElementById("conflict-details").value = "";
+} 
