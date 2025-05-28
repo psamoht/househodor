@@ -107,6 +107,7 @@ label {
   transform: scale(1.5);
 }
 
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #1e1e1e;
@@ -114,13 +115,27 @@ label {
   }
 
   button {
-    background-color: #333;
+    background-color: #2b2b2b;
     color: #eaeaea;
     border-color: #666;
   }
 
   button:hover {
-    background-color: #555;
+    background-color: #3a3a3a;
+  }
+
+  button.selected {
+    background-color: #444;
+    color: #fff;
+    border-color: #888;
+  }
+
+  button.selected[data-person="Peter"] {
+    background-color: #3366cc;
+  }
+
+  button.selected[data-person="Mimi"] {
+    background-color: #b33636;
   }
 
   #submit {
