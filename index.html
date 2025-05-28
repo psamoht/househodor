@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,77 +21,77 @@
   <section>
     <h2>Task</h2>
 
-    <div class="task-section">
-      <h3>Morgen</h3>
-      <div class="button-grid">
-        <button type="button" data-category="Morgen">Smoothie</button>
-        <button type="button" data-category="Morgen">Obst für Müsli</button>
-        <button type="button" data-category="Morgen">Brötchen holen</button>
-        <button type="button" data-category="Morgen">Küche aufgeräumt</button>
-        <button type="button" data-category="Morgen">Lordi Tablette</button>
-        <button type="button" data-category="Morgen">Lordi Gassi</button>
-        <button type="button" data-category="Morgen">Lordi Futter</button>
-      </div>
+    <h3>Morgen</h3>
+    <div class="button-grid" data-category="Morgen">
+      <button>Smoothie</button>
+      <button>Obst für Müsli</button>
+      <button>Brötchen holen</button>
+      <button>Küche aufgeräumt</button>
+      <button>Lordi Tablette</button>
+      <button>Lordi Gassi</button>
+      <button>Lordi Futter</button>
     </div>
 
-    <div class="task-section">
-      <h3>Mittag</h3>
-      <div class="button-grid">
-        <button type="button" data-category="Mittag">Kochen</button>
-        <button type="button" data-category="Mittag">Essen aufgewärmt</button>
-        <button type="button" data-category="Mittag">Küche aufgeräumt</button>
-        <button type="button" data-category="Mittag">Lordi Gassi</button>
-        <button type="button" data-category="Mittag">Lordi Futter</button>
-      </div>
+    <h3>Mittag</h3>
+    <div class="button-grid" data-category="Mittag">
+      <button>Kochen</button>
+      <button>Essen aufgewärmt</button>
+      <button>Küche aufgeräumt</button>
+      <button>Lordi Gassi</button>
+      <button>Lordi Futter</button>
     </div>
 
-    <div class="task-section">
-      <h3>Abend</h3>
-      <div class="button-grid">
-        <button type="button" data-category="Abend">Kochen</button>
-        <button type="button" data-category="Abend">Essen aufgewärmt</button>
-        <button type="button" data-category="Abend">Küche aufgeräumt</button>
-        <button type="button" data-category="Abend">Lordi Gassi</button>
-        <button type="button" data-category="Abend">Lordi Futter</button>
-      </div>
+    <h3>Abend</h3>
+    <div class="button-grid" data-category="Abend">
+      <button>Kochen</button>
+      <button>Essen aufgewärmt</button>
+      <button>Küche aufgeräumt</button>
+      <button>Lordi Gassi</button>
+      <button>Lordi Futter</button>
     </div>
 
-    <div class="task-section">
-      <h3>Generell</h3>
-      <div class="button-grid">
-        <button type="button" data-category="Generell">Bad geputzt</button>
-        <button type="button" data-category="Generell">Dusche geputzt</button>
-        <button type="button" data-category="Generell">Küche geputzt</button>
-        <button type="button" data-category="Generell">Staubsaugen</button>
-        <button type="button" data-category="Generell">Rosi ausgeleert</button>
-        <button type="button" data-category="Generell">Aufräumen</button>
-        <button type="button" data-category="Generell">Müll runterbringen</button>
-        <button type="button" data-category="Generell">Müll zum Container</button>
-        <button type="button" data-category="Generell">Spülmaschine ausräumen</button>
-        <button type="button" data-category="Generell">Spülmaschine einräumen</button>
-        <button type="button" data-category="Generell">Wäscherei</button>
-      </div>
+    <h3>Generell</h3>
+    <div class="button-grid" data-category="Generell">
+      <button>Bad geputzt</button>
+      <button>Dusche geputzt</button>
+      <button>Küche geputzt</button>
+      <button>Staubsaugen</button>
+      <button>Rosi ausgeleert</button>
+      <button>Aufräumen</button>
+      <button>Müll runterbringen</button>
+      <button>Müll zum Container</button>
+      <button>Wäscherei</button>
+      <button>Spülmaschine ausräumen</button>
+      <button>Spülmaschine einräumen</button>
     </div>
 
-    <div class="task-section">
-      <h3>Other</h3>
-      <input type="text" id="otherTask" placeholder="Enter custom task" />
+    <div class="custom-task">
+      <label for="customTask">Other:</label>
+      <input type="text" id="customTask" placeholder="Enter custom task...">
     </div>
-  </section>
 
-  <section>
-    <h2>Emotional Health</h2>
-    <div class="emotions">
-      <label><input type="checkbox" id="stressCheckbox" /> Stress</label>
+    <h3>Emotional Health</h3>
+    <div class="emotional-health">
+      <label><input type="checkbox" id="stressCheckbox"> Stress</label><br>
       <label>
-        <input type="checkbox" id="conflictCheckbox" /> Streit:
-        <input type="text" id="conflictDetails" placeholder="Was war los?" />
+        <input type="checkbox" id="conflictCheckbox"> Streit:
+        <input type="text" id="conflictDetails" placeholder="Details (optional)" />
       </label>
     </div>
   </section>
 
   <button id="submit">Save Task</button>
-  <p id="confirmation" class="confirmation-popup" style="display: none">✅ Task saved!</p>
+  <p id="confirmation" style="display:none;">✅ Task saved!</p>
+
+  <form id="hiddenForm" action="https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec" method="POST" target="hiddenIframe" style="display: none;">
+    <input type="text" name="person" id="form-person" />
+    <input type="text" name="category" id="form-category" />
+    <input type="text" name="task" id="form-task" />
+    <input type="text" name="timestamp" id="form-timestamp" />
+    <input type="text" name="datum" id="form-datum" />
+    <button type="submit" id="fake-submit">Send</button>
+  </form>
+  <iframe name="hiddenIframe" id="hiddenIframe" style="display: none;"></iframe>
 
   <script src="app.js"></script>
   <script>
@@ -101,6 +100,7 @@
         const swPath = window.location.pathname.endsWith('/') 
           ? 'sw.js' 
           : window.location.pathname.split('/').slice(0, -1).join('/') + '/sw.js';
+
         navigator.serviceWorker.register(swPath)
           .then(() => console.log('✅ Service Worker registered:', swPath))
           .catch((err) => console.error('❌ Service Worker error:', err));
