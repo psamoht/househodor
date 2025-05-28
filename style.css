@@ -107,7 +107,7 @@ label {
   transform: scale(1.5);
 }
 
-/* Dark Mode */
+/* DARK MODE */
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #1e1e1e;
@@ -124,18 +124,11 @@ label {
     background-color: #3a3a3a;
   }
 
-  /* Default selection style in dark mode */
+  /* Default selection */
   button.selected {
     background-color: #444;
     color: #fff;
     border-color: #888;
-  }
-
-  /* Selected task in dark mode: very dark green */
-  #task-buttons button.selected {
-    background-color: #1b3822;
-    border-color: #264d26;
-    color: #ffffff;
   }
 
   /* Peter: dark blue */
@@ -146,6 +139,13 @@ label {
   /* Mimi: dark red */
   button.selected[data-person="Mimi"] {
     background-color: #732626;
+  }
+
+  /* All selected buttons inside task-buttons block: dark green */
+  #task-buttons button.selected {
+    background-color: #1b3822;
+    border-color: #264d26;
+    color: #ffffff;
   }
 
   #submit {
