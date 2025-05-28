@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -38,6 +38,7 @@
       <button type="button">Essen aufgewärmt</button>
       <button type="button">Küche aufgeräumt</button>
       <button type="button">Lordi Gassi</button>
+      <button type="button">Lordi Futter</button>
     </div>
 
     <h3>Abend</h3>
@@ -60,14 +61,25 @@
       <button type="button">Müll runterbringen</button>
       <button type="button">Müll zum Container</button>
       <button type="button">Wäscherei</button>
+      <button type="button">Spülmaschine ausräumen</button>
+      <button type="button">Spülmaschine einräumen</button>
     </div>
 
-    <h3>Other</h3>
-    <input type="text" id="other-task" placeholder="Sonstiger Task..." />
+    <div class="text-field">
+      <label for="other-task">Other (Freitext):</label>
+      <input type="text" id="other-task" placeholder="Eigene Aufgabe..." />
+    </div>
+
+    <h3>Emotional Health</h3>
+    <div class="emotional">
+      <label><input type="checkbox" id="stress-check" /> Stress</label><br />
+      <label><input type="checkbox" id="streit-check" /> Streit:</label>
+      <input type="text" id="streit-text" placeholder="Was war los?" />
+    </div>
   </section>
 
   <button id="submit">Save Task</button>
-  <p id="confirmation" style="display:none;">✅ Task saved!</p>
+  <p id="confirmation">✅ Task saved!</p>
 
   <script src="app.js"></script>
 </body>
