@@ -17,8 +17,8 @@ h2 {
 }
 
 .button-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 10px;
   margin-top: 10px;
 }
@@ -31,6 +31,8 @@ button {
   background-color: #fff;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 button:hover {
@@ -42,24 +44,33 @@ button.selected {
   color: white;
 }
 
-/* Farben im Light Mode */
+/* Light Mode Farben */
 button.selected[data-person="Peter"] {
-  background-color: #007BFF; /* Blau */
+  background-color: #007BFF;
 }
 
 button.selected[data-person="Mimi"] {
-  background-color: #dc3545; /* Rot */
+  background-color: #dc3545;
 }
 
+.task-button.selected {
+  background-color: #218838;
+}
+
+/* Bestätigungsnachricht */
 #confirmation {
   display: none;
-  text-align: center;
-  font-size: 1.4em;
-  margin-top: 20px;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
   background-color: #d4edda;
   color: #155724;
-  padding: 10px;
-  border-radius: 6px;
+  padding: 20px 30px;
+  border-radius: 10px;
+  z-index: 9999;
+  text-align: center;
 }
 
 /* Nachtmodus */
@@ -79,19 +90,15 @@ button.selected[data-person="Mimi"] {
     background-color: #2a2a2a;
   }
 
-  /* Night Mode - Selektierte Buttons */
   button.selected[data-person="Peter"] {
-    background-color: #0f3d61; /* Dunkelblau */
+    background-color: #0f3d61;
   }
 
   button.selected[data-person="Mimi"] {
-    background-color: #5a0a0a; /* Dunkelrot */
+    background-color: #5a0a0a;
   }
 
-  #task-buttons-morgen button.selected,
-  #task-buttons-mittag button.selected,
-  #task-buttons-abend button.selected,
-  #task-buttons-generell button.selected {
+  .task-button.selected {
     background-color: #14532d; /* Dunkelgrün */
   }
 
