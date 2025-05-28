@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,79 +22,72 @@
     <h2>Task</h2>
 
     <h3>Morgen</h3>
-    <div class="button-grid" id="task-buttons-morgen">
-      <button type="button" data-category="Morgen">Smoothie</button>
-      <button type="button" data-category="Morgen">Obst für Müsli</button>
-      <button type="button" data-category="Morgen">Brötchen holen</button>
-      <button type="button" data-category="Morgen">Küche aufgeräumt</button>
-      <button type="button" data-category="Morgen">Lordi Tablette</button>
-      <button type="button" data-category="Morgen">Lordi Gassi</button>
-      <button type="button" data-category="Morgen">Lordi Futter</button>
+    <div class="button-grid">
+      <button class="task-button">Smoothie</button>
+      <button class="task-button">Obst für Müsli</button>
+      <button class="task-button">Brötchen holen</button>
+      <button class="task-button">Küche aufgeräumt</button>
+      <button class="task-button">Lordi Tablette</button>
+      <button class="task-button">Lordi Gassi</button>
+      <button class="task-button">Lordi Futter</button>
     </div>
 
     <h3>Mittag</h3>
-    <div class="button-grid" id="task-buttons-mittag">
-      <button type="button" data-category="Mittag">Kochen</button>
-      <button type="button" data-category="Mittag">Essen aufgewärmt</button>
-      <button type="button" data-category="Mittag">Küche aufgeräumt</button>
-      <button type="button" data-category="Mittag">Lordi Gassi</button>
-      <button type="button" data-category="Mittag">Lordi Futter</button>
+    <div class="button-grid">
+      <button class="task-button">Kochen</button>
+      <button class="task-button">Essen aufgewärmt</button>
+      <button class="task-button">Küche aufgeräumt</button>
+      <button class="task-button">Lordi Gassi</button>
+      <button class="task-button">Lordi Futter</button>
     </div>
 
     <h3>Abend</h3>
-    <div class="button-grid" id="task-buttons-abend">
-      <button type="button" data-category="Abend">Kochen</button>
-      <button type="button" data-category="Abend">Essen aufgewärmt</button>
-      <button type="button" data-category="Abend">Küche aufgeräumt</button>
-      <button type="button" data-category="Abend">Lordi Gassi</button>
-      <button type="button" data-category="Abend">Lordi Futter</button>
+    <div class="button-grid">
+      <button class="task-button">Kochen</button>
+      <button class="task-button">Essen aufgewärmt</button>
+      <button class="task-button">Küche aufgeräumt</button>
+      <button class="task-button">Lordi Gassi</button>
+      <button class="task-button">Lordi Futter</button>
     </div>
 
     <h3>Generell</h3>
-    <div class="button-grid" id="task-buttons-generell">
-      <button type="button" data-category="Generell">Bad geputzt</button>
-      <button type="button" data-category="Generell">Dusche geputzt</button>
-      <button type="button" data-category="Generell">Küche geputzt</button>
-      <button type="button" data-category="Generell">Staubsaugen</button>
-      <button type="button" data-category="Generell">Rosi ausgeleert</button>
-      <button type="button" data-category="Generell">Aufräumen</button>
-      <button type="button" data-category="Generell">Müll runterbringen</button>
-      <button type="button" data-category="Generell">Müll zum Container</button>
-      <button type="button" data-category="Generell">Spülmaschine ausräumen</button>
-      <button type="button" data-category="Generell">Spülmaschine einräumen</button>
-      <button type="button" data-category="Generell">Wäscherei</button>
-    </div>
-  </section>
-
-  <section>
-    <h3>Other</h3>
-    <input type="text" id="other-task" placeholder="Andere Aufgabe" />
-  </section>
-
-  <section>
-    <h2>Emotional Health</h2>
-    <div class="checkbox-group">
-      <input type="checkbox" id="stress" />
-      <label for="stress">Stress</label>
+    <div class="button-grid">
+      <button class="task-button">Bad geputzt</button>
+      <button class="task-button">Dusche geputzt</button>
+      <button class="task-button">Küche geputzt</button>
+      <button class="task-button">Staubsaugen</button>
+      <button class="task-button">Rosi ausgeleert</button>
+      <button class="task-button">Aufräumen</button>
+      <button class="task-button">Müll runterbringen</button>
+      <button class="task-button">Müll zum Container</button>
+      <button class="task-button">Wäscherei</button>
+      <input type="text" id="other-task" placeholder="Other..." />
     </div>
 
-    <div class="checkbox-group">
-      <input type="checkbox" id="conflict" />
-      <label for="conflict">Streit</label>
-      <input type="text" id="conflict-text" placeholder="Details zum Streit" />
+    <h3>Emotional Health</h3>
+    <div class="button-grid">
+      <label><input type="checkbox" id="stress-checkbox" /> Stress</label>
+      <label>
+        <input type="checkbox" id="conflict-checkbox" /> Streit
+        <input type="text" id="conflict-text" placeholder="Details zum Streit" />
+      </label>
     </div>
   </section>
 
   <button id="submit">Save Task</button>
-  <p id="confirmation" style="display:none;">✅ Task saved!</p>
+  <p id="confirmation">✅ Task saved!</p>
 
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(() => console.log('✅ Service Worker registered'))
-          .catch(err => console.error('❌ SW registration failed', err));
+        const swPath = window.location.pathname.endsWith('/') 
+          ? 'sw.js' 
+          : window.location.pathname.split('/').slice(0, -1).join('/') + '/sw.js';
+
+        navigator.serviceWorker.register(swPath)
+          .then(() => console.log('✅ Service Worker registered:', swPath))
+          .catch((err) => console.error('❌ Service Worker error:', err));
       });
     }
   </script>
