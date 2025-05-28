@@ -1,116 +1,119 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
-  color: #333;
   padding: 20px;
-  margin: 0;
+  background-color: #ffffff;
+  color: #000000;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-h1 {
-  font-size: 2em;
+h1, h2 {
   text-align: center;
-}
-
-h2 {
-  font-size: 1.4em;
-  margin-top: 30px;
 }
 
 .button-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 10px;
-  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 button {
-  padding: 14px 20px;
+  padding: 15px;
   font-size: 1.2em;
+  border: none;
   border-radius: 8px;
-  border: 2px solid #ccc;
-  background-color: #fff;
+  background-color: #eeeeee;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-  width: 100%;
-  box-sizing: border-box;
+  transition: background-color 0.3s, transform 0.1s;
 }
 
 button:hover {
-  background-color: #e0e0e0;
+  transform: scale(1.02);
 }
 
 button.selected {
   font-weight: bold;
+}
+
+.person-peter.selected {
+  background-color: #007BFF; /* Blau */
   color: white;
 }
 
-/* Light Mode Farben */
-button.selected[data-person="Peter"] {
-  background-color: #007BFF;
+.person-mimi.selected {
+  background-color: #FF4136; /* Rot */
+  color: white;
 }
 
-button.selected[data-person="Mimi"] {
-  background-color: #dc3545;
+.task.selected {
+  background-color: #228B22; /* Standard: Grün */
+  color: white;
 }
 
-.task-button.selected {
-  background-color: #218838;
+input[type="text"], textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1em;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
-/* Bestätigungsnachricht */
-#confirmation {
-  display: none;
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2em;
-  background-color: #d4edda;
-  color: #155724;
-  padding: 20px 30px;
+#submit {
+  display: block;
+  margin: 30px auto;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  background-color: #4CAF50;
+  color: white;
   border-radius: 10px;
-  z-index: 9999;
-  text-align: center;
+  border: none;
+  cursor: pointer;
 }
 
-/* Nachtmodus */
+#confirmation {
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 20px;
+  display: none;
+}
+
+.category-label {
+  margin-top: 30px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #121212;
-    color: #e0e0e0;
+    color: #f0f0f0;
   }
 
   button {
-    background-color: #1f1f1f;
-    color: #e0e0e0;
-    border: 2px solid #333;
+    background-color: #1e1e1e;
+    color: #f0f0f0;
   }
 
-  button:hover {
-    background-color: #2a2a2a;
+  input[type="text"], textarea {
+    background-color: #333;
+    color: #f0f0f0;
+    border: 1px solid #666;
   }
 
-  button.selected[data-person="Peter"] {
-    background-color: #0f3d61;
+  #submit {
+    background-color: #2e7d32;
   }
 
-  button.selected[data-person="Mimi"] {
-    background-color: #5a0a0a;
+  .person-peter.selected {
+    background-color: #0056b3; /* Dunkelblau */
   }
 
-  .task-button.selected {
-    background-color: #14532d; /* Dunkelgrün */
+  .person-mimi.selected {
+    background-color: #a52a2a; /* Dunkelrot */
   }
 
-  input, textarea {
-    background-color: #1f1f1f;
-    color: white;
-    border: 1px solid #444;
-  }
-
-  #confirmation {
-    background-color: #2a2a2a;
-    border: 1px solid #444;
-    color: #90ee90;
+  .task.selected {
+    background-color: #006400; /* Dunkelgrün */
   }
 }
