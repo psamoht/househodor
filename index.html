@@ -71,41 +71,25 @@
     </div>
 
     <h3>Emotional Health</h3>
-    <div class="emotional-health">
-      <label><input type="checkbox" id="stressCheckbox"> Stress</label><br>
-      <label>
-        <input type="checkbox" id="conflictCheckbox"> Streit:
-        <input type="text" id="conflictDetails" placeholder="Details (optional)" />
-      </label>
+    <div id="emotional-buttons" class="button-grid">
+      <button type="button" data-state="Stress">Stress</button>
+      <button type="button" data-state="Streit">Streit</button>
+    </div>
+    <div style="margin-top: 8px;">
+      <input type="text" id="conflictDetails" placeholder="Streit-Details (optional)" />
     </div>
   </section>
 
   <button id="submit">Save Task</button>
   <p id="confirmation" style="display:none;">✅ Task saved!</p>
 
-  <form id="hiddenForm" action="https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec" method="POST" target="hiddenIframe" style="display: none;">
-    <input type="text" name="person" id="form-person" />
-    <input type="text" name="category" id="form-category" />
-    <input type="text" name="task" id="form-task" />
-    <input type="text" name="timestamp" id="form-timestamp" />
-    <input type="text" name="datum" id="form-datum" />
-    <button type="submit" id="fake-submit">Send</button>
-  </form>
-  <iframe name="hiddenIframe" id="hiddenIframe" style="display: none;"></iframe>
-
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        // Pfad zum Service Worker dynamisch ermitteln, falls die App in einem Unterverzeichnis liegt
         const swPath = window.location.pathname.endsWith('/') 
           ? 'sw.js' 
           : window.location.pathname.split('/').slice(0, -1).join('/') + '/sw.js';
-        
-        // Sicherstellen, dass der Pfad korrekt ist, wenn index.html nicht im Root ist
-        // Falls die Seite z.B. unter /projekt/index.html liegt, sollte swPath /projekt/sw.js sein.
-        // Wenn die Seite direkt unter der Domain liegt (z.B. domain.com/ oder domain.com/index.html),
-        // sollte swPath /sw.js oder sw.js sein. Die aktuelle Logik ist dafür robust.
 
         navigator.serviceWorker.register(swPath)
           .then(() => console.log('✅ Service Worker registered:', swPath))
