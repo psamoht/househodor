@@ -1,9 +1,7 @@
-// app.js
 let selectedPerson = [];
-let selectedTasks = new Set(); // Speichert jetzt uniqueTaskKey (z.B. "Morgen|Smoothie")
+let selectedTasks = new Set();
 
 function updateButtonStyles() {
-  // Personen-Buttons (Logik von vorheriger Korrektur beibehalten)
   document.querySelectorAll("#person-buttons button").forEach((btn) => {
     const personName = btn.dataset.person;
     const cssClass = `person-${personName.toLowerCase()}`;
@@ -13,22 +11,19 @@ function updateButtonStyles() {
       btn.classList.remove("selected", cssClass);
     }
   });
-  // Bereinigung, falls ein Button nicht mehr in selectedPerson ist, aber noch Klasse hat
+
   document.querySelectorAll("#person-buttons button").forEach(pBtn => {
     const pName = pBtn.dataset.person;
     const pCssClass = `person-${pName.toLowerCase()}`;
     if (!selectedPerson.includes(pName)) {
-        pBtn.classList.remove("selected", pCssClass);
+      pBtn.classList.remove("selected", pCssClass);
     }
   });
 
-
-  // Task-Buttons
   document.querySelectorAll("div[data-category] button").forEach((btn) => {
     const taskText = btn.textContent;
     const category = btn.closest("div[data-category]").dataset.category;
-    const uniqueTaskKey = `${category}|${taskText}`; // Eindeutiger Schlüssel
-
+    const uniqueTaskKey = `${category}|${taskText}`;
     if (selectedTasks.has(uniqueTaskKey)) {
       btn.classList.add("selected-task");
     } else {
@@ -37,7 +32,6 @@ function updateButtonStyles() {
   });
 }
 
-// Person Buttons
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
     const name = btn.dataset.person;
@@ -50,13 +44,11 @@ document.querySelectorAll("#person-buttons button").forEach((btn) => {
   });
 });
 
-// Task Buttons
 document.querySelectorAll("div[data-category] button").forEach((btn) => {
   btn.addEventListener("click", () => {
     const taskText = btn.textContent;
     const category = btn.closest("div[data-category]").dataset.category;
-    const uniqueTaskKey = `${category}|${taskText}`; // Eindeutigen Schlüssel verwenden
-
+    const uniqueTaskKey = `${category}|${taskText}`;
     if (selectedTasks.has(uniqueTaskKey)) {
       selectedTasks.delete(uniqueTaskKey);
     } else {
@@ -66,7 +58,6 @@ document.querySelectorAll("div[data-category] button").forEach((btn) => {
   });
 });
 
-// Save Button
 const saveButton = document.getElementById("submit");
 saveButton.addEventListener("click", () => {
   const person =
@@ -80,35 +71,28 @@ saveButton.addEventListener("click", () => {
   }
 
   const timestamp = new Date();
-  const timestampStr = timestamp.toISOString(); // ISO-String ist gut für Server-Verarbeitung
-
-  // Erledigungsdatum (bis 03:00 zählt noch zum Vortag) - wird clientseitig berechnet
+  const timestampStr = timestamp.toISOString();
   const erledigungsdatumObj = new Date(timestamp);
   if (erledigungsdatumObj.getHours() < 3) {
     erledigungsdatumObj.setDate(erledigungsdatumObj.getDate() - 1);
   }
   const erledigungsdatumStr = erledigungsdatumObj.toLocaleDateString("de-DE", { year: 'numeric', month: '2-digit', day: '2-digit' });
 
-
   const entries = [];
 
-  // Tasks aus selectedTasks
   selectedTasks.forEach((uniqueTaskKey) => {
-    const [category, taskText] = uniqueTaskKey.split('|'); // Eindeutigen Schlüssel aufteilen
+    const [category, taskText] = uniqueTaskKey.split('|');
     entries.push({ person, category, task: taskText, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   });
 
-  // Other (Custom Task)
   if (customTaskValue) {
     entries.push({ person, category: "Generell", task: customTaskValue, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   }
 
-  // Stress
   if (document.getElementById("stressCheckbox").checked) {
     entries.push({ person, category: "Stress", task: "Ja", timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   }
 
-  // Streit
   const streitChecked = document.getElementById("conflictCheckbox").checked;
   const streitText = document.getElementById("conflictDetails").value.trim();
   if (streitChecked) {
@@ -117,54 +101,52 @@ saveButton.addEventListener("click", () => {
 
   const confirmationElement = document.getElementById("confirmation");
 
-  // URL DEINES AKTUELL BEREITGESTELLTEN APPS SCRIPT WEBHOOKS
   const scriptURL = "https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec";
 
   fetch(scriptURL, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: JSON.stringify(entries),
+    body: "data=" + encodeURIComponent(JSON.stringify(entries)),
   })
-  .then(async (res) => {
-    if (!res.ok) {
-      let errorData;
-      try {
-        errorData = await res.json(); // Versuche, Fehlerdetails als JSON zu lesen
-      } catch (e) {
-        errorData = await res.text(); // Fallback zu Text, wenn nicht JSON
+    .then(async (res) => {
+      if (!res.ok) {
+        let errorData;
+        try {
+          errorData = await res.json();
+        } catch (e) {
+          errorData = await res.text();
+        }
+        const errorMessage = (errorData && (errorData.message || (typeof errorData === 'string' ? errorData : res.statusText))) || `Server error ${res.status}`;
+        throw new Error(errorMessage);
       }
-      const errorMessage = (errorData && (errorData.message || (typeof errorData === 'string' ? errorData : res.statusText))) || `Server error ${res.status}`;
-      throw new Error(errorMessage);
-    }
-    return res.json(); // Erwarte JSON-Antwort vom Apps Script bei Erfolg
-  })
-  .then((data) => {
-    console.log("Apps Script Response:", data);
-    confirmationElement.textContent = `✅ ${data.message || 'Task(s) processed!'}`;
-    confirmationElement.style.display = "block";
-    setTimeout(() => {
-      confirmationElement.style.display = "none";
-    }, 3000);
-
-    selectedPerson = [];
-    selectedTasks.clear();
-    document.getElementById("customTask").value = "";
-    document.getElementById("stressCheckbox").checked = false;
-    document.getElementById("conflictCheckbox").checked = false;
-    document.getElementById("conflictDetails").value = "";
-    updateButtonStyles();
-  })
-  .catch((err) => {
-    console.error("Fetch Error:", err);
-    confirmationElement.textContent = `❌ Fehler beim Speichern: ${err.message}`;
-    confirmationElement.style.display = "block";
-    setTimeout(() => { // Fehler länger anzeigen
+      return res.json();
+    })
+    .then((data) => {
+      console.log("Apps Script Response:", data);
+      confirmationElement.textContent = `✅ ${data.message || 'Task(s) gespeichert'}`;
+      confirmationElement.style.display = "block";
+      setTimeout(() => {
         confirmationElement.style.display = "none";
-    }, 7000);
-  });
+      }, 3000);
+
+      selectedPerson = [];
+      selectedTasks.clear();
+      document.getElementById("customTask").value = "";
+      document.getElementById("stressCheckbox").checked = false;
+      document.getElementById("conflictCheckbox").checked = false;
+      document.getElementById("conflictDetails").value = "";
+      updateButtonStyles();
+    })
+    .catch((err) => {
+      console.error("Fetch Error:", err);
+      confirmationElement.textContent = `❌ Fehler beim Speichern: ${err.message}`;
+      confirmationElement.style.display = "block";
+      setTimeout(() => {
+        confirmationElement.style.display = "none";
+      }, 7000);
+    });
 });
 
-// Initialen Style setzen
 updateButtonStyles();
