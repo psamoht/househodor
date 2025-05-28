@@ -31,32 +31,55 @@ button:hover {
   transform: scale(1.02);
 }
 
+/* Allgemeine Klasse für ausgewählte Buttons (wird von app.js für Personen-Buttons gesetzt) */
 button.selected {
   font-weight: bold;
 }
 
-.person-peter.selected {
+/* Spezifische Styles für ausgewählte Personen-Buttons */
+/* app.js fügt z.B. die Klassen "selected" und "person-peter" hinzu */
+button.person-peter.selected {
   background-color: #007BFF; /* Blau */
   color: white;
 }
 
-.person-mimi.selected {
+button.person-mimi.selected {
   background-color: #FF4136; /* Rot */
   color: white;
 }
 
-.task.selected {
-  background-color: #228B22; /* Standard: Grün */
+/* Korrigierte Regel für ausgewählte Task-Buttons */
+/* app.js fügt die Klasse "selected-task" hinzu */
+button.selected-task {
+  background-color: #228B22; /* Grün */
   color: white;
 }
 
 input[type="text"], textarea {
-  width: 100%;
+  width: calc(100% - 22px); /* Berücksichtigt Padding und Border, falls vorhanden */
   padding: 10px;
   font-size: 1em;
   margin-top: 10px;
   margin-bottom: 20px;
+  box-sizing: border-box; /* Stellt sicher, dass Padding nicht zur Gesamtbreite addiert wird */
 }
+
+/* Stellt sicher, dass das Label und die Eingabefelder für Custom Task und Emotional Health gut aussehen */
+.custom-task, .emotional-health {
+    margin-bottom: 20px;
+}
+
+.custom-task label, .emotional-health label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.emotional-health input[type="text"] {
+    margin-left: 5px; /* Kleiner Abstand für das Detailfeld */
+    width: auto; /* Breite anpassen, damit es nicht die volle Breite einnimmt */
+    display: inline-block; /* Damit es neben dem Label bleibt, falls gewünscht */
+}
+
 
 #submit {
   display: block;
@@ -74,10 +97,10 @@ input[type="text"], textarea {
   text-align: center;
   font-size: 1.5em;
   margin-top: 20px;
-  display: none;
+  display: none; /* Wird per JS sichtbar gemacht */
 }
 
-.category-label {
+.category-label { /* Diese Klasse wird aktuell nicht im HTML verwendet, aber falls doch: */
   margin-top: 30px;
   font-weight: bold;
   font-size: 1.2em;
@@ -92,28 +115,32 @@ input[type="text"], textarea {
 
   button {
     background-color: #1e1e1e;
-    color: #f0f0f0;
+    color: #f0f0f0; /* Standard Textfarbe für Buttons im Dark Mode */
   }
 
   input[type="text"], textarea {
-    background-color: #333;
+    background-color: #333333;
     color: #f0f0f0;
-    border: 1px solid #666;
+    border: 1px solid #666666;
   }
 
   #submit {
-    background-color: #2e7d32;
+    background-color: #2e7d32; /* Dunkleres Grün für den Submit-Button */
   }
 
-  .person-peter.selected {
+  button.person-peter.selected {
     background-color: #0056b3; /* Dunkelblau */
+    color: #f0f0f0; /* Sicherstellen, dass der Text lesbar ist */
   }
 
-  .person-mimi.selected {
+  button.person-mimi.selected {
     background-color: #a52a2a; /* Dunkelrot */
+    color: #f0f0f0; /* Sicherstellen, dass der Text lesbar ist */
   }
 
-  .task.selected {
+  /* Korrigierte Regel für ausgewählte Task-Buttons im Dark Mode */
+  button.selected-task {
     background-color: #006400; /* Dunkelgrün */
+    color: #f0f0f0; /* Sicherstellen, dass der Text lesbar ist */
   }
 }
