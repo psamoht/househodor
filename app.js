@@ -1,34 +1,35 @@
 // app.js
 let selectedPerson = [];
-let selectedTasks = new Set();
+let selectedTasks = new Set(); // Speichert jetzt uniqueTaskKey (z.B. "Morgen|Smoothie")
 
 function updateButtonStyles() {
-  // Personen-Buttons
+  // Personen-Buttons (Logik von vorheriger Korrektur beibehalten)
   document.querySelectorAll("#person-buttons button").forEach((btn) => {
-    const personName = btn.dataset.person.toLowerCase(); // Verwende data-person für die Klasse
-    if (selectedPerson.includes(btn.dataset.person)) {
-      btn.classList.add("selected", `person-${personName}`); // z.B. person-peter
+    const personName = btn.dataset.person;
+    const cssClass = `person-${personName.toLowerCase()}`;
+    if (selectedPerson.includes(personName)) {
+      btn.classList.add("selected", cssClass);
     } else {
-      btn.classList.remove("selected", `person-${personName}`);
-      // Stelle sicher, dass alle Personenklassen entfernt werden, falls mehrere möglich wären
-      // Da hier nur eine Person pro Button, ist dies spezifisch genug.
-      // Falls ein Button für "Gemeinsam" existieren würde, bräuchte es eine andere Logik.
-      // Die aktuelle Logik entfernt "peter" und "mimi" explizit beim Deselektieren,
-      // was okay ist, solange es nur diese zwei gibt. Besser ist es, die spezifische Klasse zu entfernen.
-      document.querySelectorAll("#person-buttons button").forEach(pBtn => {
-          pBtn.classList.remove(`person-${pBtn.dataset.person.toLowerCase()}`);
-          if (selectedPerson.includes(pBtn.dataset.person)) {
-              pBtn.classList.add("selected", `person-${pBtn.dataset.person.toLowerCase()}`);
-          } else {
-              pBtn.classList.remove("selected");
-          }
-      });
+      btn.classList.remove("selected", cssClass);
+    }
+  });
+  // Bereinigung, falls ein Button nicht mehr in selectedPerson ist, aber noch Klasse hat
+  document.querySelectorAll("#person-buttons button").forEach(pBtn => {
+    const pName = pBtn.dataset.person;
+    const pCssClass = `person-${pName.toLowerCase()}`;
+    if (!selectedPerson.includes(pName)) {
+        pBtn.classList.remove("selected", pCssClass);
     }
   });
 
+
   // Task-Buttons
-  document.querySelectorAll("div[data-category] button").forEach((btn) => { // *** KORRIGIERTER SELEKTOR ***
-    if (selectedTasks.has(btn.textContent)) {
+  document.querySelectorAll("div[data-category] button").forEach((btn) => {
+    const taskText = btn.textContent;
+    const category = btn.closest("div[data-category]").dataset.category;
+    const uniqueTaskKey = `${category}|${taskText}`; // Eindeutiger Schlüssel
+
+    if (selectedTasks.has(uniqueTaskKey)) {
       btn.classList.add("selected-task");
     } else {
       btn.classList.remove("selected-task");
@@ -39,7 +40,7 @@ function updateButtonStyles() {
 // Person Buttons
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    const name = btn.dataset.person; // Verwende data-person Attribut
+    const name = btn.dataset.person;
     if (selectedPerson.includes(name)) {
       selectedPerson = selectedPerson.filter((n) => n !== name);
     } else {
@@ -50,13 +51,16 @@ document.querySelectorAll("#person-buttons button").forEach((btn) => {
 });
 
 // Task Buttons
-document.querySelectorAll("div[data-category] button").forEach((btn) => { // *** KORRIGIERTER SELEKTOR ***
+document.querySelectorAll("div[data-category] button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    const task = btn.textContent;
-    if (selectedTasks.has(task)) {
-      selectedTasks.delete(task);
+    const taskText = btn.textContent;
+    const category = btn.closest("div[data-category]").dataset.category;
+    const uniqueTaskKey = `${category}|${taskText}`; // Eindeutigen Schlüssel verwenden
+
+    if (selectedTasks.has(uniqueTaskKey)) {
+      selectedTasks.delete(uniqueTaskKey);
     } else {
-      selectedTasks.add(task);
+      selectedTasks.add(uniqueTaskKey);
     }
     updateButtonStyles();
   });
@@ -68,7 +72,7 @@ saveButton.addEventListener("click", () => {
   const person =
     selectedPerson.length === 2 ? "Gemeinsam" : selectedPerson[0] || "";
 
-  const customTaskValue = document.getElementById("customTask").value.trim(); // *** KORRIGIERTE ID ***
+  const customTaskValue = document.getElementById("customTask").value.trim();
 
   if (!person || (selectedTasks.size === 0 && !customTaskValue)) {
     alert("Bitte wähle mindestens eine Person und eine Aufgabe aus oder gib eine benutzerdefinierte Aufgabe ein.");
@@ -76,84 +80,91 @@ saveButton.addEventListener("click", () => {
   }
 
   const timestamp = new Date();
-  const timestampStr = timestamp.toISOString();
+  const timestampStr = timestamp.toISOString(); // ISO-String ist gut für Server-Verarbeitung
 
-  // Erledigungsdatum (bis 03:00 zählt noch zum Vortag)
-  const erledigungsdatum = new Date(timestamp);
-  if (erledigungsdatum.getHours() < 3) {
-    erledigungsdatum.setDate(erledigungsdatum.getDate() - 1);
+  // Erledigungsdatum (bis 03:00 zählt noch zum Vortag) - wird clientseitig berechnet
+  const erledigungsdatumObj = new Date(timestamp);
+  if (erledigungsdatumObj.getHours() < 3) {
+    erledigungsdatumObj.setDate(erledigungsdatumObj.getDate() - 1);
   }
-  const erledigungsdatumStr = erledigungsdatum.toLocaleDateString("de-DE");
+  const erledigungsdatumStr = erledigungsdatumObj.toLocaleDateString("de-DE", { year: 'numeric', month: '2-digit', day: '2-digit' });
+
 
   const entries = [];
 
-  // Tasks
-  selectedTasks.forEach((taskText) => {
-    let category = "Generell"; // Standardkategorie
-    // Finde den Button, um die Kategorie zu bestimmen
-    document.querySelectorAll("div[data-category] button").forEach(btn => {
-      if (btn.textContent === taskText) {
-        const parentGrid = btn.closest("div[data-category]");
-        if (parentGrid) {
-          category = parentGrid.dataset.category;
-        }
-      }
-    });
+  // Tasks aus selectedTasks
+  selectedTasks.forEach((uniqueTaskKey) => {
+    const [category, taskText] = uniqueTaskKey.split('|'); // Eindeutigen Schlüssel aufteilen
     entries.push({ person, category, task: taskText, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   });
 
   // Other (Custom Task)
-  if (customTaskValue) { // *** Verwendet korrigierte Variable ***
+  if (customTaskValue) {
     entries.push({ person, category: "Generell", task: customTaskValue, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   }
 
   // Stress
-  if (document.getElementById("stressCheckbox").checked) { // *** KORRIGIERTE ID ***
+  if (document.getElementById("stressCheckbox").checked) {
     entries.push({ person, category: "Stress", task: "Ja", timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   }
 
   // Streit
-  const streitChecked = document.getElementById("conflictCheckbox").checked; // *** KORRIGIERTE ID ***
-  const streitText = document.getElementById("conflictDetails").value.trim(); // *** KORRIGIERTE ID ***
-  if (streitChecked) { // Streit wird auch ohne Details gespeichert, falls die Checkbox aktiv ist
+  const streitChecked = document.getElementById("conflictCheckbox").checked;
+  const streitText = document.getElementById("conflictDetails").value.trim();
+  if (streitChecked) {
     entries.push({ person: selectedPerson.length === 1 ? selectedPerson[0] : "Beide", category: "Streit", task: streitText || "Ja", timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   }
 
-  // Send to Apps Script
-  fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec", {
+  const confirmationElement = document.getElementById("confirmation");
+
+  // URL DEINES AKTUELL BEREITGESTELLTEN APPS SCRIPT WEBHOOKS
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec";
+
+  fetch(scriptURL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(entries),
   })
-    .then((res) => {
-        if (!res.ok) {
-            // Wenn der Server einen Fehlerstatus zurückgibt (z.B. 4xx, 5xx)
-            return res.text().then(text => { throw new Error("Server-Antwort: " + res.status + " " + text) });
-        }
-        return res.text();
-    })
-    .then((textResponse) => {
-      console.log("Apps Script Response:", textResponse); // Log für Debugging
-      document.getElementById("confirmation").style.display = "block";
-      setTimeout(() => {
-        document.getElementById("confirmation").style.display = "none";
-      }, 2000);
+  .then(async (res) => {
+    if (!res.ok) {
+      let errorData;
+      try {
+        errorData = await res.json(); // Versuche, Fehlerdetails als JSON zu lesen
+      } catch (e) {
+        errorData = await res.text(); // Fallback zu Text, wenn nicht JSON
+      }
+      const errorMessage = (errorData && (errorData.message || (typeof errorData === 'string' ? errorData : res.statusText))) || `Server error ${res.status}`;
+      throw new Error(errorMessage);
+    }
+    return res.json(); // Erwarte JSON-Antwort vom Apps Script bei Erfolg
+  })
+  .then((data) => {
+    console.log("Apps Script Response:", data);
+    confirmationElement.textContent = `✅ ${data.message || 'Task(s) processed!'}`;
+    confirmationElement.style.display = "block";
+    setTimeout(() => {
+      confirmationElement.style.display = "none";
+    }, 3000);
 
-      selectedPerson = [];
-      selectedTasks.clear();
-      document.getElementById("customTask").value = ""; // *** KORRIGIERTE ID ***
-      document.getElementById("stressCheckbox").checked = false; // *** KORRIGIERTE ID ***
-      document.getElementById("conflictCheckbox").checked = false; // *** KORRIGIERTE ID ***
-      document.getElementById("conflictDetails").value = ""; // *** KORRIGIERTE ID ***
-      updateButtonStyles();
-    })
-    .catch((err) => {
-      alert("Fehler beim Speichern: " + err.message);
-      console.error("Fetch Error:", err);
-    });
+    selectedPerson = [];
+    selectedTasks.clear();
+    document.getElementById("customTask").value = "";
+    document.getElementById("stressCheckbox").checked = false;
+    document.getElementById("conflictCheckbox").checked = false;
+    document.getElementById("conflictDetails").value = "";
+    updateButtonStyles();
+  })
+  .catch((err) => {
+    console.error("Fetch Error:", err);
+    confirmationElement.textContent = `❌ Fehler beim Speichern: ${err.message}`;
+    confirmationElement.style.display = "block";
+    setTimeout(() => { // Fehler länger anzeigen
+        confirmationElement.style.display = "none";
+    }, 7000);
+  });
 });
 
-// Initialen Style setzen, falls notwendig (z.B. wenn Werte aus LocalStorage geladen werden)
+// Initialen Style setzen
 updateButtonStyles();
