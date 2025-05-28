@@ -1,7 +1,10 @@
+// app.js – aktualisiert mit Buttons für "Stress" und "Streit"
 let selectedPerson = [];
 let selectedTasks = new Set();
+let emotionalStates = new Set(); // "Stress" oder "Streit"
 
 function updateButtonStyles() {
+  // Personen-Buttons
   document.querySelectorAll("#person-buttons button").forEach((btn) => {
     const personName = btn.dataset.person;
     const cssClass = `person-${personName.toLowerCase()}`;
@@ -12,14 +15,7 @@ function updateButtonStyles() {
     }
   });
 
-  document.querySelectorAll("#person-buttons button").forEach(pBtn => {
-    const pName = pBtn.dataset.person;
-    const pCssClass = `person-${pName.toLowerCase()}`;
-    if (!selectedPerson.includes(pName)) {
-      pBtn.classList.remove("selected", pCssClass);
-    }
-  });
-
+  // Task-Buttons
   document.querySelectorAll("div[data-category] button").forEach((btn) => {
     const taskText = btn.textContent;
     const category = btn.closest("div[data-category]").dataset.category;
@@ -30,8 +26,19 @@ function updateButtonStyles() {
       btn.classList.remove("selected-task");
     }
   });
+
+  // Emotional Buttons
+  document.querySelectorAll("#emotional-buttons button").forEach((btn) => {
+    const state = btn.dataset.state;
+    if (emotionalStates.has(state)) {
+      btn.classList.add("selected-task");
+    } else {
+      btn.classList.remove("selected-task");
+    }
+  });
 }
 
+// Personen-Buttons
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
     const name = btn.dataset.person;
@@ -44,6 +51,7 @@ document.querySelectorAll("#person-buttons button").forEach((btn) => {
   });
 });
 
+// Task-Buttons
 document.querySelectorAll("div[data-category] button").forEach((btn) => {
   btn.addEventListener("click", () => {
     const taskText = btn.textContent;
@@ -58,15 +66,27 @@ document.querySelectorAll("div[data-category] button").forEach((btn) => {
   });
 });
 
+// Emotional Buttons
+document.querySelectorAll("#emotional-buttons button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const state = btn.dataset.state;
+    if (emotionalStates.has(state)) {
+      emotionalStates.delete(state);
+    } else {
+      emotionalStates.add(state);
+    }
+    updateButtonStyles();
+  });
+});
+
 const saveButton = document.getElementById("submit");
 saveButton.addEventListener("click", () => {
-  const person =
-    selectedPerson.length === 2 ? "Gemeinsam" : selectedPerson[0] || "";
-
+  const person = selectedPerson.length === 2 ? "Gemeinsam" : selectedPerson[0] || "";
   const customTaskValue = document.getElementById("customTask").value.trim();
 
-  if (!person || (selectedTasks.size === 0 && !customTaskValue)) {
-    alert("Bitte wähle mindestens eine Person und eine Aufgabe aus oder gib eine benutzerdefinierte Aufgabe ein.");
+  // neue Validierung: mindestens 1 Person + (Task oder Emotional)
+  if (!person || (selectedTasks.size === 0 && !customTaskValue && emotionalStates.size === 0)) {
+    alert("Bitte wähle mindestens eine Person und eine Aufgabe oder einen Emotionalzustand aus.");
     return;
   }
 
@@ -80,27 +100,26 @@ saveButton.addEventListener("click", () => {
 
   const entries = [];
 
+  // Tasks
   selectedTasks.forEach((uniqueTaskKey) => {
     const [category, taskText] = uniqueTaskKey.split('|');
     entries.push({ person, category, task: taskText, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   });
 
+  // Custom Task
   if (customTaskValue) {
     entries.push({ person, category: "Generell", task: customTaskValue, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
   }
 
-  if (document.getElementById("stressCheckbox").checked) {
-    entries.push({ person, category: "Stress", task: "Ja", timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
-  }
-
-  const streitChecked = document.getElementById("conflictCheckbox").checked;
-  const streitText = document.getElementById("conflictDetails").value.trim();
-  if (streitChecked) {
-    entries.push({ person: selectedPerson.length === 1 ? selectedPerson[0] : "Beide", category: "Streit", task: streitText || "Ja", timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
-  }
+  // Emotional States
+  emotionalStates.forEach((state) => {
+    const taskText = state === "Streit" ? document.getElementById("conflictDetails").value.trim() || "Ja" : "Ja";
+    const category = state;
+    const personForState = (state === "Streit" && selectedPerson.length === 1) ? selectedPerson[0] : person;
+    entries.push({ person: personForState, category, task: taskText, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
+  });
 
   const confirmationElement = document.getElementById("confirmation");
-
   const scriptURL = "https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec";
 
   fetch(scriptURL, {
@@ -133,9 +152,8 @@ saveButton.addEventListener("click", () => {
 
       selectedPerson = [];
       selectedTasks.clear();
+      emotionalStates.clear();
       document.getElementById("customTask").value = "";
-      document.getElementById("stressCheckbox").checked = false;
-      document.getElementById("conflictCheckbox").checked = false;
       document.getElementById("conflictDetails").value = "";
       updateButtonStyles();
     })
