@@ -1,3 +1,68 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  padding: 20px;
+  margin: 0;
+}
+
+h1 {
+  font-size: 2em;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.4em;
+  margin-top: 30px;
+}
+
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+button {
+  padding: 14px 20px;
+  font-size: 1.2em;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
+
+button.selected {
+  font-weight: bold;
+  color: white;
+}
+
+/* Farben im Light Mode */
+button.selected[data-person="Peter"] {
+  background-color: #007BFF; /* Blau */
+}
+
+button.selected[data-person="Mimi"] {
+  background-color: #dc3545; /* Rot */
+}
+
+#confirmation {
+  display: none;
+  text-align: center;
+  font-size: 1.4em;
+  margin-top: 20px;
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+/* Nachtmodus */
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #121212;
@@ -5,38 +70,35 @@
   }
 
   button {
-    background-color: #1e1e1e;
+    background-color: #1f1f1f;
     color: #e0e0e0;
-    border-color: #333;
+    border: 2px solid #333;
   }
 
   button:hover {
     background-color: #2a2a2a;
   }
 
+  /* Night Mode - Selektierte Buttons */
   button.selected[data-person="Peter"] {
-    background-color: #0f3d61; /* dunkles Blau für Nachtmodus */
-    color: white;
+    background-color: #0f3d61; /* Dunkelblau */
   }
 
   button.selected[data-person="Mimi"] {
-    background-color: #5a0a0a; /* dunkles Rot für Nachtmodus */
-    color: white;
+    background-color: #5a0a0a; /* Dunkelrot */
   }
 
-  /* 🟢 Selektierte Task-Buttons im Nachtmodus: dunkles Grün */
   #task-buttons-morgen button.selected,
   #task-buttons-mittag button.selected,
   #task-buttons-abend button.selected,
   #task-buttons-generell button.selected {
-    background-color: #14532d; /* dunkles grün, #14532d ist Tailwind's dark-green-800 */
-    color: white;
+    background-color: #14532d; /* Dunkelgrün */
   }
 
   input, textarea {
-    background-color: #1e1e1e;
+    background-color: #1f1f1f;
     color: white;
-    border: 1px solid #333;
+    border: 1px solid #444;
   }
 
   #confirmation {
