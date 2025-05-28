@@ -97,9 +97,15 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
+        // Pfad zum Service Worker dynamisch ermitteln, falls die App in einem Unterverzeichnis liegt
         const swPath = window.location.pathname.endsWith('/') 
           ? 'sw.js' 
           : window.location.pathname.split('/').slice(0, -1).join('/') + '/sw.js';
+        
+        // Sicherstellen, dass der Pfad korrekt ist, wenn index.html nicht im Root ist
+        // Falls die Seite z.B. unter /projekt/index.html liegt, sollte swPath /projekt/sw.js sein.
+        // Wenn die Seite direkt unter der Domain liegt (z.B. domain.com/ oder domain.com/index.html),
+        // sollte swPath /sw.js oder sw.js sein. Die aktuelle Logik ist dafür robust.
 
         navigator.serviceWorker.register(swPath)
           .then(() => console.log('✅ Service Worker registered:', swPath))
