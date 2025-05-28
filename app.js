@@ -1,94 +1,126 @@
-let selectedPeople = new Set();
+// app.js
+let selectedPerson = [];
 let selectedTasks = new Set();
 
-// Handle person button selection (multiple possible)
+function updateButtonStyles() {
+  // Personen-Buttons
+  document.querySelectorAll("#person-buttons button").forEach((btn) => {
+    if (selectedPerson.includes(btn.textContent)) {
+      btn.classList.add("selected", btn.textContent.toLowerCase());
+    } else {
+      btn.classList.remove("selected", "peter", "mimi");
+    }
+  });
+
+  // Task-Buttons
+  document.querySelectorAll("#task-buttons button").forEach((btn) => {
+    if (selectedTasks.has(btn.textContent)) {
+      btn.classList.add("selected-task");
+    } else {
+      btn.classList.remove("selected-task");
+    }
+  });
+}
+
+// Person Buttons
 document.querySelectorAll("#person-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
     const name = btn.textContent;
-    if (selectedPeople.has(name)) {
-      selectedPeople.delete(name);
-      btn.classList.remove("selected", "peter-selected", "mimi-selected");
+    if (selectedPerson.includes(name)) {
+      selectedPerson = selectedPerson.filter((n) => n !== name);
     } else {
-      selectedPeople.add(name);
-      if (name === "Peter") btn.classList.add("peter-selected");
-      else if (name === "Mimi") btn.classList.add("mimi-selected");
+      selectedPerson.push(name);
     }
+    updateButtonStyles();
   });
 });
 
-// Handle task button selection (multiple possible)
+// Task Buttons
 document.querySelectorAll("#task-buttons button").forEach((btn) => {
   btn.addEventListener("click", () => {
-    const name = btn.textContent;
-    if (selectedTasks.has(name)) {
-      selectedTasks.delete(name);
-      btn.classList.remove("selected-task");
+    const task = btn.textContent;
+    if (selectedTasks.has(task)) {
+      selectedTasks.delete(task);
     } else {
-      selectedTasks.add(name);
-      btn.classList.add("selected-task");
+      selectedTasks.add(task);
     }
+    updateButtonStyles();
   });
 });
 
-// Handle emotional health checkboxes
-document.getElementById("submit").addEventListener("click", () => {
-  if (selectedPeople.size === 0 || (selectedTasks.size === 0 && !document.getElementById("other-task").value.trim() && !document.getElementById("stress").checked && !document.getElementById("conflict").checked)) {
-    alert("Bitte wähle mindestens eine Person und eine Aufgabe oder gib eine andere Aufgabe an.");
+// Save Button
+const saveButton = document.getElementById("submit");
+saveButton.addEventListener("click", () => {
+  const person =
+    selectedPerson.length === 2 ? "Gemeinsam" : selectedPerson[0] || "";
+
+  if (!person || selectedTasks.size === 0) {
+    alert("Bitte wähle mindestens eine Person und eine Aufgabe aus.");
     return;
   }
 
-  const person = Array.from(selectedPeople);
-  const tasks = Array.from(selectedTasks).map(task => ({
-    name: task,
-    category: document.querySelector(`button[data-task='${task}']`).closest(".section").dataset.category
-  }));
+  const timestamp = new Date();
+  const timestampStr = timestamp.toISOString();
 
-  const data = {
-    person,
-    tasks,
-    otherTask: document.getElementById("other-task").value,
-    stress: document.getElementById("stress").checked,
-    conflict: document.getElementById("conflict").checked,
-    conflictDetails: document.getElementById("conflict-details").value,
-    timestamp: new Date().toISOString()
-  };
+  // Erledigungsdatum (bis 03:00 zählt noch zum Vortag)
+  const erledigungsdatum = new Date(timestamp);
+  if (erledigungsdatum.getHours() < 3) {
+    erledigungsdatum.setDate(erledigungsdatum.getDate() - 1);
+  }
+  const erledigungsdatumStr = erledigungsdatum.toLocaleDateString("de-DE");
 
+  const entries = [];
+
+  // Tasks
+  selectedTasks.forEach((task) => {
+    const category = document.querySelector(
+      `#task-buttons button[value='${task}']`
+    )?.dataset.category || "Generell";
+    entries.push({ person, category, task, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
+  });
+
+  // Other
+  const other = document.getElementById("other-task").value.trim();
+  if (other) {
+    entries.push({ person, category: "Generell", task: other, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
+  }
+
+  // Stress
+  if (document.getElementById("stress-check").checked) {
+    entries.push({ person, category: "Stress", task: "Ja", timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
+  }
+
+  // Streit
+  const streit = document.getElementById("streit-check").checked;
+  const streitText = document.getElementById("streit-text").value.trim();
+  if (streit && streitText) {
+    entries.push({ person: "Beide", category: "Streit", task: streitText, timestamp: timestampStr, erledigungsdatum: erledigungsdatumStr });
+  }
+
+  // Send to Apps Script
   fetch("https://script.google.com/macros/s/AKfycbzThbuiqM_gqasr_0HcbehS3E5iDnkdH0ZYDTWzS1ppSv_3ag4FV8nwA3-EjcT4GY8LnQ/exec", {
     method: "POST",
-    body: JSON.stringify(data),
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(entries),
   })
-    .then(res => res.text())
-    .then(text => {
-      if (text.trim() === "Success") {
-        showConfirmation();
-        resetForm();
-      } else {
-        alert("Server Error: " + text);
-      }
+    .then((res) => res.text())
+    .then(() => {
+      document.getElementById("confirmation").style.display = "block";
+      setTimeout(() => {
+        document.getElementById("confirmation").style.display = "none";
+      }, 2000);
+
+      selectedPerson = [];
+      selectedTasks.clear();
+      document.getElementById("other-task").value = "";
+      document.getElementById("stress-check").checked = false;
+      document.getElementById("streit-check").checked = false;
+      document.getElementById("streit-text").value = "";
+      updateButtonStyles();
     })
-    .catch(err => {
-      alert("Fehler beim Senden: " + err.message);
-      console.error(err);
+    .catch((err) => {
+      alert("Fehler beim Speichern: " + err.message);
     });
 });
-
-function showConfirmation() {
-  const confirmation = document.getElementById("confirmation");
-  confirmation.style.display = "block";
-  setTimeout(() => {
-    confirmation.style.display = "none";
-  }, 2000);
-}
-
-function resetForm() {
-  selectedPeople.clear();
-  selectedTasks.clear();
-  document.querySelectorAll("button").forEach(btn => btn.classList.remove("selected", "peter-selected", "mimi-selected", "selected-task"));
-  document.getElementById("other-task").value = "";
-  document.getElementById("stress").checked = false;
-  document.getElementById("conflict").checked = false;
-  document.getElementById("conflict-details").value = "";
-} 
