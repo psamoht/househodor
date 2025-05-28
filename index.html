@@ -20,72 +20,69 @@
 
   <section>
     <h2>Task</h2>
-
-    <h3>Morgen</h3>
-    <div class="button-grid" data-category="Morgen">
-      <button type="button">Smoothie</button>
-      <button type="button">Obst für Müsli</button>
-      <button type="button">Brötchen holen</button>
-      <button type="button">Küche aufgeräumt</button>
-      <button type="button">Lordi Tablette</button>
-      <button type="button">Lordi Gassi</button>
-      <button type="button">Lordi Futter</button>
-    </div>
-
-    <h3>Mittag</h3>
-    <div class="button-grid" data-category="Mittag">
-      <button type="button">Kochen</button>
-      <button type="button">Essen aufgewärmt</button>
-      <button type="button">Küche aufgeräumt</button>
-      <button type="button">Lordi Gassi</button>
-      <button type="button">Lordi Futter</button>
-    </div>
-
-    <h3>Abend</h3>
-    <div class="button-grid" data-category="Abend">
-      <button type="button">Kochen</button>
-      <button type="button">Essen aufgewärmt</button>
-      <button type="button">Küche aufgeräumt</button>
-      <button type="button">Lordi Gassi</button>
-      <button type="button">Lordi Futter</button>
-    </div>
-
-    <h3>Generell</h3>
-    <div class="button-grid" data-category="Generell">
-      <button type="button">Bad geputzt</button>
-      <button type="button">Dusche geputzt</button>
-      <button type="button">Küche geputzt</button>
-      <button type="button">Staubsaugen</button>
-      <button type="button">Rosi ausgeleert</button>
-      <button type="button">Aufräumen</button>
-      <button type="button">Müll runterbringen</button>
-      <button type="button">Müll zum Container</button>
-      <button type="button">Wäscherei</button>
-      <button type="button">Spülmaschine ausräumen</button>
-      <button type="button">Spülmaschine einräumen</button>
-    </div>
-
-    <div class="other-task">
-      <label for="otherTask">Sonstiger Task:</label>
-      <input type="text" id="otherTask" placeholder="Füge deinen Task hinzu" />
+    <div class="task-section">
+      <h3>Morgen</h3>
+      <div class="button-grid" data-category="Morgen">
+        <button type="button">Smoothie</button>
+        <button type="button">Obst für Müsli</button>
+        <button type="button">Brötchen holen</button>
+        <button type="button">Küche aufgeräumt</button>
+        <button type="button">Lordi Tablette</button>
+        <button type="button">Lordi Gassi</button>
+        <button type="button">Lordi Futter</button>
+      </div>
+      <h3>Mittag</h3>
+      <div class="button-grid" data-category="Mittag">
+        <button type="button">Kochen</button>
+        <button type="button">Essen aufgewärmt</button>
+        <button type="button">Küche aufgeräumt</button>
+        <button type="button">Lordi Gassi</button>
+        <button type="button">Lordi Futter</button>
+      </div>
+      <h3>Abend</h3>
+      <div class="button-grid" data-category="Abend">
+        <button type="button">Kochen</button>
+        <button type="button">Essen aufgewärmt</button>
+        <button type="button">Küche aufgeräumt</button>
+        <button type="button">Lordi Gassi</button>
+        <button type="button">Lordi Futter</button>
+      </div>
+      <h3>Generell</h3>
+      <div class="button-grid" data-category="Generell">
+        <button type="button">Bad geputzt</button>
+        <button type="button">Dusche geputzt</button>
+        <button type="button">Küche geputzt</button>
+        <button type="button">Staubsaugen</button>
+        <button type="button">Rosi ausgeleert</button>
+        <button type="button">Aufräumen</button>
+        <button type="button">Müll runterbringen</button>
+        <button type="button">Müll zum Container</button>
+        <button type="button">Wäscherei</button>
+        <button type="button">Spülmaschine ausräumen</button>
+        <button type="button">Spülmaschine einräumen</button>
+      </div>
     </div>
   </section>
 
   <section>
+    <h3>Other (Generell)</h3>
+    <input type="text" id="custom-task" placeholder="Eigener Task" />
+  </section>
+
+  <section>
     <h2>Emotional Health</h2>
-    <div class="emotions">
-      <label><input type="checkbox" id="stressCheckbox" /> Stress</label><br />
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="stress" /> Stress</label>
       <label>
-        <input type="checkbox" id="argumentCheckbox" /> Streit:
-        <input type="text" id="argumentDetails" placeholder="Details zum Streit" />
+        <input type="checkbox" id="conflict" /> Streit
+        <input type="text" id="conflict-details" placeholder="Details zum Streit" />
       </label>
     </div>
   </section>
 
   <button id="submit">Save Task</button>
-  <div id="confirmation" class="confirmation">✅ Task saved!</div>
+  <p id="confirmation" style="display:none;">✅ Task saved!</p>
 
-  <iframe name="hiddenIframe" id="hiddenIframe" style="display: none;"></iframe>
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
